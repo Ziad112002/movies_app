@@ -1,0 +1,28 @@
+abstract final class AppAssets {
+  static const String imagesPath = 'assets/images/';
+  static const String movieLogo = '${imagesPath}movie_logo.png';
+  static const String availableNow = '${imagesPath}available_now.png';
+  static const String iconCall = '${imagesPath}call.png';
+  static const String forgotPassword = '${imagesPath}forgot_password.png';
+  static const String gamer1 = '${imagesPath}gamer(1).png';
+  static const String gamer2 = '${imagesPath}gamer(2).png';
+  static const String gamer3 = '${imagesPath}gamer(3).png';
+  static const String gamer4 = '${imagesPath}gamer(4).png';
+  static const String gamer5 = '${imagesPath}gamer(5).png';
+  static const String gamer6 = '${imagesPath}gamer(6).png';
+  static const String gamer7 = '${imagesPath}gamer(7).png';
+  static const String gamer8 = '${imagesPath}gamer(8).png';
+  static const String gamer = '${imagesPath}gamer.png';
+  static const String iconIdentification =
+      '${imagesPath}icon _Identification.png';
+  static const String iconExplore = '${imagesPath}icon_explore.png';
+  static const String iconEyeOff = '${imagesPath}icon_eye_off.png';
+  static const String iconFolder = '${imagesPath}icon_folder.png';
+  static const String iconGoogle = '${imagesPath}icon_google.png';
+  static const String iconHome = '${imagesPath}icon_home.png';
+  static const String iconList = '${imagesPath}icon_list.png';
+  static const String iconLock = '${imagesPath}icon_lock.png';
+  static const String iconProfile = '${imagesPath}icon_profiel.png';
+  static const String iconUser = '${imagesPath}icon_user.png';
+  static const String moviePosters = '${imagesPath}Movies Posters.png';
+}
