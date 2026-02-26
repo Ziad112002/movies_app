@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:movies/ui/screens/login/login_screen.dart';
 import 'package:movies/ui/screens/register/register_screen.dart';
 import 'package:movies/ui/utils/app_theme.dart';
 

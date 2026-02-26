@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/ui/utils/app_assets.dart';
 import 'package:movies/ui/utils/app_constants.dart';
@@ -21,10 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Register"),
-        leading: Icon(Icons.arrow_back),
-      ),
+      appBar: AppBar(title: Text("Register"), leading: Icon(Icons.arrow_back)),
       body: Form(
         key: formKey,
         child: Padding(
@@ -33,48 +31,79 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(
-                  height:  context.height*.17,
-                  child: ListView.builder(
-                    scrollDirection: .horizontal,
-                    itemCount: AppConstants.avatars.length,
-                      itemBuilder: (context,index){
-                      return Image.asset(AppConstants.avatars[index],height: context.height*.17,);
-                      }),
+                CarouselSlider.builder(
+                  itemCount: AppConstants.avatars.length,
+                  itemBuilder: (context, itemIndex, pageViewIndex) {
+                    return Image.asset(
+                      AppConstants.avatars[itemIndex],
+                      fit: .contain,
+                    );
+                  },
+                  options: CarouselOptions(
+                    enableInfiniteScroll: false,
+                    autoPlay: false,
+                    disableCenter: true,
+                    enlargeCenterPage: true,
+                    height: context.height * .17,
+                    enlargeFactor: .6,
+                    aspectRatio: 2,
+                    viewportFraction: 0.36,
+                    initialPage: 6,
+                  ),
                 ),
                 CustomTextField(
                   controller: emailCtrl,
                   hintText: "Name",
-                  prefixIcon:  ImageIcon(AssetImage(AppAssets.iconIdentification),color: Colors.white,),
+                  prefixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconIdentification),
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: context.height * .024),
                 CustomTextField(
                   controller: passwordCtrl,
                   hintText: "Email",
-                  prefixIcon:  ImageIcon(AssetImage(AppAssets.iconEmail),color: Colors.white,),
+                  prefixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconEmail),
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: context.height * .024),
                 CustomTextField(
                   controller: passwordCtrl,
                   hintText: "Password",
                   isObscure: isObscure,
-                  prefixIcon:  ImageIcon(AssetImage(AppAssets.iconLock),color: Colors.white,),
-                  suffixIcon:  ImageIcon(AssetImage(AppAssets.iconEyeOff),color: Colors.white,),
+                  prefixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconLock),
+                    color: Colors.white,
+                  ),
+                  suffixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconEyeOff),
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: context.height * .024),
                 CustomTextField(
                   controller: passwordCtrl,
                   hintText: "Confirm Password",
                   isObscure: isObscure,
-                  prefixIcon:  ImageIcon(AssetImage(AppAssets.iconLock),color: Colors.white,),
-                  suffixIcon:  ImageIcon(AssetImage(AppAssets.iconEyeOff),color: Colors.white,),
+                  prefixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconLock),
+                    color: Colors.white,
+                  ),
+                  suffixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconEyeOff),
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: context.height * .024),
                 CustomTextField(
                   controller: passwordCtrl,
                   hintText: "Phone Number",
-                  prefixIcon: ImageIcon(AssetImage(AppAssets.iconCall),color: Colors.white,),
-
+                  prefixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconCall),
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: context.height * .024),
                 buildCreateAccountButton(),
