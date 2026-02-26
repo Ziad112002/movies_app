@@ -1,6 +1,10 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/ui/utils/app_assets.dart';
+import 'package:movies/ui/utils/app_constants.dart';
+import 'package:movies/ui/utils/app_dialogs.dart';
+import 'package:movies/ui/utils/app_routes.dart';
 import 'package:movies/ui/utils/extensions/context_extension.dart';
 import 'package:movies/ui/widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
@@ -75,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       InkWell(
                         onTap: () {
-
+                       Navigator.push(context, AppRoutes.registerScreen);
                         },
                         child: Text(
                           "Create One",
@@ -120,13 +124,36 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget buildLoginButton() {
     return CustomButton(
       text: "Login",
-      onPress: () {},
+      onPress: ()async {
+
+        try {
+          showLoading(context);
+          final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: emailCtrl.text,
+              password: passwordCtrl.text
+          );
+          Navigator.pop(context);
+          Navigator.push(context, AppRoutes.navigationScreen);
+        } on FirebaseAuthException catch (e) {
+          Navigator.pop(context);
+          var message = "";
+          if (e.code == 'user-not-found') {
+            message = 'No user found for that email.';
+          } else if (e.code == 'wrong-password') {
+            message = 'Wrong password provided for that user.';
+          } else {
+            message = e.message ?? AppConstants.defaultErrorMessage;
+          }
+          showMessage(context, message, title: "Error!", posText: "Ok");
+        }
+      },
     );
   }
   CustomButton buildGoogleLoginButton() {
     return CustomButton(
       onPress: (){
-      }, 
+
+      },
       text: 'Login With Google',
       icon: Image.asset(AppAssets.iconGoogle),
 

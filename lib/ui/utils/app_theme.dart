@@ -19,7 +19,6 @@ abstract final class AppTheme {
       primary: Color(0xff121312),
       secondary: Color(0xffFFBB3B),
       tertiary: Color(0xff282A28),
-        surface: Color(0xffE82626)
     ),
     textTheme: TextTheme(
       headlineSmall: TextStyle(

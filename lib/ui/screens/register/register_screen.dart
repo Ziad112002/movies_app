@@ -1,7 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/ui/utils/app_assets.dart';
 import 'package:movies/ui/utils/app_constants.dart';
+import 'package:movies/ui/utils/app_dialogs.dart';
+import 'package:movies/ui/utils/app_routes.dart';
 import 'package:movies/ui/utils/extensions/context_extension.dart';
 import 'package:movies/ui/widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
@@ -22,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Register"), leading: Icon(Icons.arrow_back)),
+      appBar: AppBar(title: Text("Register")),
       body: Form(
         key: formKey,
         child: Padding(
@@ -52,7 +55,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 CustomTextField(
-                  controller: emailCtrl,
                   hintText: "Name",
                   prefixIcon: ImageIcon(
                     AssetImage(AppAssets.iconIdentification),
@@ -61,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: context.height * .024),
                 CustomTextField(
-                  controller: passwordCtrl,
+                  controller: emailCtrl,
                   hintText: "Email",
                   prefixIcon: ImageIcon(
                     AssetImage(AppAssets.iconEmail),
@@ -84,7 +86,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: context.height * .024),
                 CustomTextField(
-                  controller: passwordCtrl,
                   hintText: "Confirm Password",
                   isObscure: isObscure,
                   prefixIcon: ImageIcon(
@@ -112,13 +113,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: .center,
                   children: [
                     Text(
-                      "Don’t Have Account ? ",
+                      "Already Have Account ? ",
                       style: context.textTheme.bodySmall,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(context, AppRoutes.loginScreen);
+                      },
                       child: Text(
-                        "Create One",
+                        "Login",
                         style: context.textTheme.bodySmall?.copyWith(
                           color: context.secondaryColor,
                           fontWeight: FontWeight.w900,
@@ -151,6 +154,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget buildCreateAccountButton() {
-    return CustomButton(text: "Create Account", onPress: () {});
+    return CustomButton(
+      text: "Create Account",
+      onPress: () async {
+        try {
+          showLoading(context);
+          final credential = await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+                email: emailCtrl.text,
+                password: passwordCtrl.text,
+          );
+
+              Navigator.pop(context);
+              Navigator.push(context, AppRoutes.navigationScreen);
+        } on FirebaseAuthException catch (e) {
+          Navigator.pop(context);
+          var message = "";
+          if (e.code == 'weak-password') {
+            message = 'The password provided is too weak.';
+          } else if (e.code == 'email-already-in-use') {
+            message = 'The account already exists for that email.';
+          } else {
+            message = e.message ?? AppConstants.defaultErrorMessage;
+          }
+          showMessage(context, message, title: "Error!", posText: "Ok");
+        } catch (e) {
+          showMessage(
+            context,
+            AppConstants.defaultErrorMessage,
+            title: "Error!",
+            posText: "Ok",
+          );
+        }
+      },
+    );
   }
 }

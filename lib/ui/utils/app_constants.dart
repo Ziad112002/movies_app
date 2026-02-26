@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'package:movies/ui/utils/app_assets.dart';
 
 abstract final class AppConstants {
@@ -12,4 +14,7 @@ abstract final class AppConstants {
     AppAssets.gamer7,
     AppAssets.gamer8,
   ];
+  static const Color redColor=Color(0xffE82626);
+  static String defaultErrorMessage="Something went wrong, please try again later!";
+
 }
