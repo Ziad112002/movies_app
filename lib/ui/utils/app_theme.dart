@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 abstract final class AppTheme {
   static final ThemeData themeData = ThemeData(
     scaffoldBackgroundColor: Color(0xff121312),
+    appBarTheme: AppBarThemeData(
+      backgroundColor: Color(0xff121312),
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 16,
+        color: Color(0xffFFBB3B),
+        fontWeight: .normal
+      ),
+      iconTheme: IconThemeData(color: Color(0xffFFBB3B))
+    ),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Color(0xff121312),
       brightness: .dark,
