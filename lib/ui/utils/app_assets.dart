@@ -22,7 +22,10 @@ abstract final class AppAssets {
   static const String iconHome = '${imagesPath}icon_home.png';
   static const String iconList = '${imagesPath}icon_list.png';
   static const String iconLock = '${imagesPath}icon_lock.png';
-  static const String iconProfile = '${imagesPath}icon_profiel.png';
+  static const String iconEmail = '${imagesPath}icon_email.png';
+  static const String iconProfile = '${imagesPath}icon_profile.png';
+  static const String iconEgypt = '${imagesPath}icon_EG.png';
+  static const String iconUS = '${imagesPath}icon_US.png';
   static const String iconUser = '${imagesPath}icon_user.png';
   static const String moviePosters = '${imagesPath}Movies Posters.png';
 }
