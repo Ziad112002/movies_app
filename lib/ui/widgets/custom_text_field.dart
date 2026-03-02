@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies/ui/utils/app_colors.dart';
 import 'package:movies/ui/utils/extensions/context_extension.dart';
 
 
@@ -28,7 +29,7 @@ class CustomTextField extends StatelessWidget {
       borderSide: BorderSide(color: Colors.transparent),
     ); OutlineInputBorder errorBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: BorderSide(color: context.surfaceColor),
+      borderSide: BorderSide(color: AppColors.red),
     );
     return TextFormField(
       validator: validator,
@@ -41,7 +42,7 @@ class CustomTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         hint: Text(hintText),
 
-        fillColor: context.tertiaryColor,
+        fillColor: AppColors.softBlack,
         filled: true,
         border: border,
         enabledBorder: border,

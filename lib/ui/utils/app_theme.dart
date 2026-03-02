@@ -13,13 +13,6 @@ abstract final class AppTheme {
       ),
       iconTheme: IconThemeData(color: Color(0xffFFBB3B))
     ),
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Color(0xff121312),
-      brightness: .dark,
-      primary: Color(0xff121312),
-      secondary: Color(0xffFFBB3B),
-      tertiary: Color(0xff282A28),
-    ),
     textTheme: TextTheme(
       headlineSmall: TextStyle(
         fontSize: 24,

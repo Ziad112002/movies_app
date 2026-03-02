@@ -14,7 +14,6 @@ abstract final class AppConstants {
     AppAssets.gamer7,
     AppAssets.gamer8,
   ];
-  static const Color redColor=Color(0xffE82626);
   static String defaultErrorMessage="Something went wrong, please try again later!";
 
 }

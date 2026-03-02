@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/ui/utils/app_assets.dart';
+import 'package:movies/ui/utils/app_colors.dart';
 import 'package:movies/ui/utils/app_constants.dart';
 import 'package:movies/ui/utils/app_dialogs.dart';
 import 'package:movies/ui/utils/app_routes.dart';
@@ -123,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Text(
                         "Login",
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: context.secondaryColor,
+                          color: AppColors.lightOrange,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -134,12 +135,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 Switch(
                   trackOutlineColor: WidgetStatePropertyAll(
-                    context.secondaryColor,
+                    AppColors.lightOrange,
                   ),
                   inactiveTrackColor: Colors.transparent,
-                  inactiveThumbColor: context.secondaryColor,
+                  inactiveThumbColor: AppColors.lightOrange,
                   activeTrackColor: Colors.transparent,
-                  activeThumbColor: context.secondaryColor,
+                  activeThumbColor: AppColors.lightOrange,
                   activeThumbImage: AssetImage(AppAssets.iconEgypt),
                   inactiveThumbImage: AssetImage(AppAssets.iconUS),
                   value: false,

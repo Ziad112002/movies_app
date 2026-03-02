@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/ui/utils/app_assets.dart';
+import 'package:movies/ui/utils/app_colors.dart';
 import 'package:movies/ui/utils/app_constants.dart';
 import 'package:movies/ui/utils/app_dialogs.dart';
 import 'package:movies/ui/utils/app_routes.dart';
@@ -62,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                      "Forget Password ?",
                       style: context.textTheme.bodySmall?.copyWith(
-                    color: context.secondaryColor,
+                    color: AppColors.lightOrange,
                     ),
                       textAlign: TextAlign.end,
                     ),
@@ -84,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           "Create One",
                           style: context.textTheme.bodySmall?.copyWith(
-                            color: context.secondaryColor,
+                            color: AppColors.lightOrange,
                             fontWeight: FontWeight.w900
                           ),
                         ),
@@ -101,11 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   buildGoogleLoginButton(),
                   SizedBox(height: context.height * .036),
                   Switch(
-                    trackOutlineColor: WidgetStatePropertyAll(context.secondaryColor),
+                    trackOutlineColor: WidgetStatePropertyAll(AppColors.lightOrange),
                     inactiveTrackColor: Colors.transparent,
-                    inactiveThumbColor: context.secondaryColor,
+                    inactiveThumbColor:AppColors.lightOrange,
                     activeTrackColor: Colors.transparent,
-                    activeThumbColor: context.secondaryColor,
+                    activeThumbColor: AppColors.lightOrange,
                     activeThumbImage: AssetImage(AppAssets.iconEgypt),
                     inactiveThumbImage: AssetImage(AppAssets.iconUS),
                     value: false,

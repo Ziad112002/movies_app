@@ -28,4 +28,5 @@ abstract final class AppAssets {
   static const String iconUS = '${imagesPath}icon_US.png';
   static const String iconUser = '${imagesPath}icon_user.png';
   static const String moviePosters = '${imagesPath}Movies Posters.png';
+  static const String onBoarding_1917 = '${imagesPath}1917.png';
 }
