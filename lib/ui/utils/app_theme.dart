@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies/ui/utils/app_colors.dart';
 
 abstract final class AppTheme {
   static final ThemeData themeData = ThemeData(
