@@ -2,6 +2,7 @@ abstract final class AppAssets {
   static const String imagesPath = 'assets/images/';
   static const String movieLogo = '${imagesPath}movie_logo.png';
   static const String availableNow = '${imagesPath}available_now.png';
+  static const String watchNow = '${imagesPath}watch_now.png';
   static const String iconCall = '${imagesPath}call.png';
   static const String forgotPassword = '${imagesPath}forgot_password.png';
   static const String gamer1 = '${imagesPath}gamer(1).png';
@@ -30,4 +31,5 @@ abstract final class AppAssets {
   static const String iconSearch = '${imagesPath}icon_search.png';
   static const String moviePosters = '${imagesPath}Movies Posters.png';
   static const String onBoarding_1917 = '${imagesPath}1917.png';
+  static const String emptyList = '${imagesPath}empty_list.png';
 }

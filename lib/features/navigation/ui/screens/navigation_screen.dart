@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:movies/ui/screens/navigation/tabs/explore/explore_tab.dart';
-import 'package:movies/ui/screens/navigation/tabs/home/home_tab.dart';
-import 'package:movies/ui/screens/navigation/tabs/profile/profile_tab.dart';
-import 'package:movies/ui/screens/navigation/tabs/search/search_tab.dart';
-import 'package:movies/ui/utils/app_assets.dart';
-import 'package:movies/ui/utils/app_colors.dart';
-import 'package:movies/ui/utils/extensions/context_extension.dart';
+import 'package:movies/features/navigation/ui/screens/tabs/explore/explore_tab.dart';
+import 'package:movies/features/navigation/ui/screens/tabs/home/home_tab.dart';
+import 'package:movies/features/navigation/ui/screens/tabs/profile/profile_tab.dart';
+import 'package:movies/features/navigation/ui/screens/tabs/search/search_tab.dart';
+import 'package:movies/core/utils/app_assets.dart';
+import 'package:movies/core/utils/app_colors.dart';
 
 class NavigationScreen extends StatefulWidget {
    const NavigationScreen({super.key});

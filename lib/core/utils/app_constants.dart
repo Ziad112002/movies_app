@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:movies/ui/utils/app_assets.dart';
+import 'package:movies/core/utils/app_assets.dart';
 
 abstract final class AppConstants {
   static const List<String> avatars =[

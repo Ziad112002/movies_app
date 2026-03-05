@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movies/ui/utils/app_colors.dart';
+import 'package:movies/core/utils/app_colors.dart';
 
 abstract final class AppTheme {
   static final ThemeData themeData = ThemeData(
@@ -39,6 +39,10 @@ abstract final class AppTheme {
         fontSize: 16,
         color: Color(0xffFFBB3B),
         fontWeight: FontWeight.normal,
+      ),displayMedium: TextStyle(
+        fontSize: 20,
+        color: AppColors.black,
+        fontWeight: FontWeight.bold,
       ),
       bodySmall: TextStyle(
         fontSize: 14,

@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:movies/ui/utils/app_colors.dart';
-import 'package:movies/ui/utils/extensions/context_extension.dart';
+import 'package:movies/core/utils/app_colors.dart';
+import 'package:movies/core/utils/extensions/context_extension.dart';
 
 
 class CustomButton extends StatelessWidget {
@@ -9,12 +9,14 @@ class CustomButton extends StatelessWidget {
   final TextStyle? style;
   final Color background;
   final Widget? icon;
+  final Widget? icon2;
   final VoidCallback? onPress;
   const CustomButton({
     super.key,
     required this.text,
     required this.onPress,
     this.icon,
+    this.icon2,
     this.background=AppColors.lightOrange,
      this.style,
   });
@@ -35,6 +37,7 @@ class CustomButton extends StatelessWidget {
         children: [
           if (icon != null) ...[icon!, SizedBox(width: 9)],
           Text(text, style: style??context.textTheme.labelLarge),
+          if (icon2 != null) ...[ SizedBox(width: 9),icon2!],
         ],
       ),
     );

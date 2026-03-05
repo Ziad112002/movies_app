@@ -1,13 +1,13 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:movies/ui/utils/app_assets.dart';
-import 'package:movies/ui/utils/app_colors.dart';
-import 'package:movies/ui/utils/app_constants.dart';
-import 'package:movies/ui/utils/app_dialogs.dart';
-import 'package:movies/ui/utils/app_routes.dart';
-import 'package:movies/ui/utils/extensions/context_extension.dart';
-import 'package:movies/ui/widgets/custom_button.dart';
+import 'package:movies/core/utils/app_assets.dart';
+import 'package:movies/core/utils/app_colors.dart';
+import 'package:movies/core/utils/app_constants.dart';
+import 'package:movies/core/utils/app_dialogs.dart';
+import 'package:movies/core/utils/app_routes.dart';
+import 'package:movies/core/utils/extensions/context_extension.dart';
+import 'package:movies/features/auth/ui/widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {

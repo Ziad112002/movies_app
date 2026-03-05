@@ -1,13 +1,13 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:movies/ui/utils/app_assets.dart';
-import 'package:movies/ui/utils/app_colors.dart';
-import 'package:movies/ui/utils/app_constants.dart';
-import 'package:movies/ui/utils/app_dialogs.dart';
-import 'package:movies/ui/utils/app_routes.dart';
-import 'package:movies/ui/utils/extensions/context_extension.dart';
-import 'package:movies/ui/widgets/custom_button.dart';
+import 'package:movies/core/utils/app_assets.dart';
+import 'package:movies/core/utils/app_colors.dart';
+import 'package:movies/core/utils/app_constants.dart';
+import 'package:movies/core/utils/app_dialogs.dart';
+import 'package:movies/core/utils/app_routes.dart';
+import 'package:movies/core/utils/extensions/context_extension.dart';
+import 'package:movies/features/auth/ui/widgets/custom_button.dart';
+import 'package:movies/features/auth/ui/widgets/custom_carousel_slider.dart';
 import '../../widgets/custom_text_field.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -35,25 +35,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CarouselSlider.builder(
-                  itemCount: AppConstants.avatars.length,
+                CustomCarouselSlider(
+                  length: AppConstants.avatars.length,
                   itemBuilder: (context, itemIndex, pageViewIndex) {
                     return Image.asset(
                       AppConstants.avatars[itemIndex],
                       fit: .contain,
                     );
                   },
-                  options: CarouselOptions(
-                    enableInfiniteScroll: false,
-                    autoPlay: false,
-                    disableCenter: true,
-                    enlargeCenterPage: true,
-                    height: context.height * .17,
-                    enlargeFactor: .6,
-                    aspectRatio: 2,
-                    viewportFraction: 0.36,
-                    initialPage: 6,
-                  ),
                 ),
                 CustomTextField(
                   hintText: "Name",
@@ -164,10 +153,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               .createUserWithEmailAndPassword(
                 email: emailCtrl.text,
                 password: passwordCtrl.text,
-          );
+              );
 
-              Navigator.pop(context);
-              Navigator.push(context, AppRoutes.navigationScreen);
+          Navigator.pop(context);
+          Navigator.push(context, AppRoutes.navigationScreen);
         } on FirebaseAuthException catch (e) {
           Navigator.pop(context);
           var message = "";
@@ -191,3 +180,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+
