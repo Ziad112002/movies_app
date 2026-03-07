@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
-import 'package:movies/core/utils/constants/app_constants.dart';
+import 'package:movies/core/utils/app_constants.dart';
 import 'package:movies/core/utils/app_dialogs.dart';
 import 'package:movies/core/utils/app_routes.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
