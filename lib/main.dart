@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:movies/core/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:movies/features/navigation/ui/screens/tabs/profile_details/profile_details_screen.dart';
+import 'core/di/di.dart';
 import 'firebase_options.dart';
 
 void main() async{
+  initDependencies();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
