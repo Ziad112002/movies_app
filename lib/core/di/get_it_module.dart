@@ -1,7 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:movies/core/utils/constants/app_constants.dart';
+import 'package:movies/core/constants/app_constants.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 

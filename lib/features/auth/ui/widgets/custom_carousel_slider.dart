@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:movies/core/utils/constants/app_constants.dart';
+import 'package:movies/core/constants/app_constants.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
 
 class CustomCarouselSlider extends StatelessWidget {
