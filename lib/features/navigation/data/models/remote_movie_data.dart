@@ -4,7 +4,7 @@ class MovieData {
   final int movieCount;
   final int limit;
   final int pageNumber;
-  final List<Movie> movies;
+  final List<RemoteMovie> movies;
 
   const MovieData({
     required this.movieCount,
@@ -19,7 +19,7 @@ class MovieData {
       limit: json['limit'] as int,
       pageNumber: json['page_number'] as int,
       movies: (json['movies'] as List<dynamic>)
-          .map((e) => Movie.fromJson(e as Map<String, dynamic>))
+          .map((e) => RemoteMovie.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
   }

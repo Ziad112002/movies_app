@@ -1,6 +1,6 @@
 import 'movies_response.dart';
 
-class Movie {
+class RemoteMovie {
   final int id;
   final String url;
   final String imdbCode;
@@ -28,7 +28,7 @@ class Movie {
   final String dateUploaded;
   final int dateUploadedUnix;
 
-  const Movie({
+  const RemoteMovie({
     required this.id,
     required this.url,
     required this.imdbCode,
@@ -57,36 +57,36 @@ class Movie {
     required this.dateUploadedUnix,
   });
 
-  factory Movie.fromJson(Map<String, dynamic> json) {
-    return Movie(
-      id: json['id'] as int,
-      url: json['url'] as String,
-      imdbCode: json['imdb_code'] as String,
-      title: json['title'] as String,
-      titleEnglish: json['title_english'] as String,
-      titleLong: json['title_long'] as String,
-      slug: json['slug'] as String,
-      year: json['year'] as int,
-      rating: (json['rating'] as num).toDouble(),
-      runtime: json['runtime'] as int,
-      genres: List<String>.from(json['genres'] as List),
-      summary: json['summary'] as String,
-      descriptionFull: json['description_full'] as String,
-      synopsis: json['synopsis'] as String,
+  factory RemoteMovie.fromJson(Map<String, dynamic> json) {
+    return RemoteMovie(
+      id: json['id'] as int? ?? 0,
+      url: json['url'] as String? ?? '',
+      imdbCode: json['imdb_code'] as String? ?? '',
+      title: json['title'] as String? ?? 'Unknown',
+      titleEnglish: json['title_english'] as String? ?? (json['title'] as String? ?? ''),
+      titleLong: json['title_long'] as String? ?? '',
+      slug: json['slug'] as String? ?? '',
+      year: json['year'] as int? ?? 0,
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      runtime: json['runtime'] as int? ?? 0,
+      genres: List<String>.from(json['genres'] as List? ?? []),
+      summary: json['summary'] as String? ?? '',
+      descriptionFull: json['description_full'] as String? ?? '',
+      synopsis: json['synopsis'] as String? ?? '',
       ytTrailerCode: json['yt_trailer_code'] as String?,
-      language: json['language'] as String,
-      mpaRating: json['mpa_rating'] as String? ?? '',
+      language: json['language'] as String? ?? 'English',           // ← fallback
+      mpaRating: json['mpa_rating'] as String? ?? '',               // safe
       backgroundImage: json['background_image'] as String?,
       backgroundImageOriginal: json['background_image_original'] as String?,
       smallCoverImage: json['small_cover_image'] as String?,
       mediumCoverImage: json['medium_cover_image'] as String?,
       largeCoverImage: json['large_cover_image'] as String?,
-      state: json['state'] as String,
-      torrents: (json['torrents'] as List<dynamic>)
+      state: json['state'] as String? ?? 'unknown',                 // ← fallback
+      torrents: (json['torrents'] as List<dynamic>? ?? [])
           .map((e) => Torrent.fromJson(e as Map<String, dynamic>))
           .toList(),
-      dateUploaded: json['date_uploaded'] as String,
-      dateUploadedUnix: json['date_uploaded_unix'] as int,
+      dateUploaded: json['date_uploaded'] as String? ?? '',         // ← fallback
+      dateUploadedUnix: json['date_uploaded_unix'] as int? ?? 0,
     );
   }
 

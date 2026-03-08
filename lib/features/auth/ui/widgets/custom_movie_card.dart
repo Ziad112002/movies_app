@@ -3,11 +3,13 @@ import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
 import 'package:movies/core/utils/app_routes.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
+import 'package:movies/features/navigation/domain/models/movie.dart';
 
 class CustomMovieCard extends StatelessWidget {
-  const CustomMovieCard({super.key,required this.heightRatio,required this.widthRatio});
+  const CustomMovieCard({super.key,required this.heightRatio,required this.widthRatio, this.movie});
   final double heightRatio;
   final double widthRatio;
+  final Movie? movie;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ Navigator.push(context, AppRoutes.movieDetailsScreen);
             width: context.width*widthRatio,
             decoration:BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(image: AssetImage(AppAssets.onBoarding_1917),fit: .cover,)
+              image: DecorationImage(image:movie!=null? NetworkImage(movie!.mediumCoverImage):AssetImage(AppAssets.onBoarding_1917),fit: .cover,)
             ) ,
           ),
           Positioned(
@@ -37,7 +39,7 @@ Navigator.push(context, AppRoutes.movieDetailsScreen);
               child: Row(
                 mainAxisAlignment: .center,
                 children: [
-                  Text("7.7",style: context.textTheme.bodySmall?.copyWith(fontSize: 16),),
+                  Text(movie!=null?"${movie!.rating}":"7.7",style: context.textTheme.bodySmall?.copyWith(fontSize: 16),),
                   Icon(Icons.star_rate_sharp,color: AppColors.lightOrange,)
                 ],
               ),

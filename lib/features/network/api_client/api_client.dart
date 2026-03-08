@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:movies/core/constants/app_constants.dart';
-import 'package:movies/features/network/models/movies_response.dart';
+import 'package:movies/features/navigation/data/models/movies_response.dart';
 import 'package:retrofit/retrofit.dart';
 part 'api_client.g.dart';
 @singleton

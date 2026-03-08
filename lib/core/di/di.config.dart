@@ -14,7 +14,22 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/navigation/data/mapper/movies_mapper.dart' as _i1001;
+import '../../features/navigation/data/repositories/data_sources/remote_movies_data_source.dart'
+    as _i91;
+import '../../features/navigation/data/repositories/data_sources/remote_movies_data_source_impl.dart'
+    as _i83;
+import '../../features/navigation/data/repositories/movies_repository_impl.dart'
+    as _i197;
+import '../../features/navigation/domain/models/movie.dart' as _i410;
+import '../../features/navigation/domain/repository/movies_repository.dart'
+    as _i27;
+import '../../features/navigation/domain/use_case/movies_use_case.dart'
+    as _i729;
+import '../../features/navigation/ui/screens/cubit/movies_cubit.dart' as _i448;
+import '../../features/navigation/ui/screens/cubit/movies_state.dart' as _i702;
 import '../../features/network/api_client/api_client.dart' as _i652;
+import '../utils/resource.dart' as _i275;
 import 'get_it_module.dart' as _i1015;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -27,7 +42,27 @@ extension GetItInjectableX on _i174.GetIt {
     final getItModule = _$GetItModule();
     gh.factory<_i895.Connectivity>(() => getItModule.getConnectivity());
     gh.factory<_i361.Dio>(() => getItModule.getDio());
+    gh.factory<_i1001.MoviesMapper>(() => _i1001.MoviesMapper());
     gh.singleton<_i652.ApiClient>(() => _i652.ApiClient(gh<_i361.Dio>()));
+    gh.factory<_i702.MoviesState>(
+      () => _i702.MoviesState(gh<_i275.Resource<List<_i410.Movie>>>()),
+    );
+    gh.factory<_i91.RemoteMoviesDataSource>(
+      () => _i83.RemoteMoviesDataSourceImpl(gh<_i652.ApiClient>()),
+    );
+    gh.factory<_i27.MoviesRepository>(
+      () => _i197.MoviesRepositoryImpl(
+        gh<_i895.Connectivity>(),
+        gh<_i91.RemoteMoviesDataSource>(),
+        gh<_i1001.MoviesMapper>(),
+      ),
+    );
+    gh.factory<_i729.MoviesUseCase>(
+      () => _i729.MoviesUseCase(gh<_i27.MoviesRepository>()),
+    );
+    gh.factory<_i448.MoviesCubit>(
+      () => _i448.MoviesCubit(gh<_i729.MoviesUseCase>()),
+    );
     return this;
   }
 }

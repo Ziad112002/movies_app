@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies/core/di/di.dart';
+import 'package:movies/features/navigation/ui/screens/cubit/movies_cubit.dart';
 import 'package:movies/features/navigation/ui/screens/tabs/explore/explore_tab.dart';
 import 'package:movies/features/navigation/ui/screens/tabs/home/home_tab.dart';
 import 'package:movies/features/navigation/ui/screens/tabs/profile/profile_tab.dart';
@@ -21,12 +24,22 @@ class _NavigationScreenState extends State<NavigationScreen> {
    ExploreTab(),
    ProfileTab()
  ];
+MoviesCubit cubit=getIt();
+@override
+  void initState() {
+    super.initState();
 
+      cubit.loadMovies();
+
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        bottomNavigationBar: buildBottomNavigationBar(),
-      body:tabs[_selectedIndex] ,
+    return BlocProvider(
+      create: (_)=> cubit,
+      child: Scaffold(
+          bottomNavigationBar: buildBottomNavigationBar(),
+        body:tabs[_selectedIndex] ,
+      ),
     );
   }
 
