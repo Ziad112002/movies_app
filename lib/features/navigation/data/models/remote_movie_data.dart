@@ -18,7 +18,7 @@ class MovieData {
       movieCount: json['movie_count'] as int,
       limit: json['limit'] as int,
       pageNumber: json['page_number'] as int,
-      movies: (json['movies'] as List<dynamic>)
+      movies: (json['movies'] as List<dynamic>? ??[])
           .map((e) => RemoteMovie.fromJson(e as Map<String, dynamic>))
           .toList(),
     );

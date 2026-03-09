@@ -8,9 +8,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class MoviesCubit extends Cubit<MoviesState>{
   final MoviesUseCase _moviesUseCase;
   MoviesCubit(this._moviesUseCase):super(MoviesState(Resource.initial()));
-  Future<void>loadMovies()async{
+  Future<void>loadMovies(   int? limit,
+      int? page,
+      String? genre,
+      String? queryTerm,
+      String? sortBy,
+      String? orderBy,
+      int? minimumRating,)async{
     emit(MoviesState(Resource.loading()));
-    var result=await _moviesUseCase();
+    var result=await _moviesUseCase(limit,page,genre,queryTerm,sortBy,orderBy,minimumRating);
     if(result.isSuccess){
       emit(MoviesState(Resource.success(result.getData())));
     }else{

@@ -1,109 +1,164 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies/core/di/di.dart';
 import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
-import 'package:movies/core/constants/app_constants.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
 import 'package:movies/core/utils/resource.dart';
 import 'package:movies/features/auth/ui/widgets/custom_movie_card.dart';
+import 'package:movies/features/navigation/domain/models/movie.dart';
 import 'package:movies/features/navigation/ui/screens/cubit/movies_cubit.dart';
 import 'package:movies/features/navigation/ui/screens/cubit/movies_state.dart';
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
 
   @override
+  State<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
+  MoviesCubit availableNowCubit = getIt();
+  MoviesCubit watchNowCubit = getIt();
+  @override
+  void initState() {
+    super.initState();
+    availableNowCubit.loadMovies(
+      10,
+      null,
+      null,
+      null,
+      "data_added",
+      "desc",
+      null,
+    );
+    watchNowCubit.loadMovies(10, null, null, null, "seeds", "desc", 7);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: .stretch,
-        children: [
-          Image.asset(AppAssets.availableNow),
-          BlocBuilder<MoviesCubit, MoviesState>(
-            builder: (context, state) {
-              if (state.moviesApi.status == AppStatus.loading) {
-
-                return CircularProgressIndicator();
-              } else if (state.moviesApi.status == AppStatus.success &&
-                  state.moviesApi.data != null) {
-                final movies = state.moviesApi.data;
-
-                if (movies == null || movies.isEmpty) {
-                  print("data is empty");
-                  return const Center(
-                    child: Text(
-                      "No movies available",
-                      style: TextStyle(fontSize: 30, color: AppColors.white),
-                    ),
-                  );
-                }
-                return CarouselSlider.builder(
-                  //length
-                  itemCount: state.moviesApi.data!.length,
-                  itemBuilder: (context, index, pageViewIndex) {
-                    return CustomMovieCard(
-                      movie: state.moviesApi.data![index],
-                      heightRatio: .38,
-                      widthRatio: .59,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => availableNowCubit),
+        BlocProvider(create: (_) => watchNowCubit),
+      ],
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Image.asset(AppAssets.availableNow),
+              BlocBuilder<MoviesCubit, MoviesState>(
+                bloc: availableNowCubit,
+                builder: (context, state) {
+                  if (state.moviesApi.status == AppStatus.loading) {
+                    return CircularProgressIndicator(
+                      color: AppColors.white,
                     );
-                  },
-                  options: CarouselOptions(
-                    enableInfiniteScroll: false,
-                    autoPlay: false,
-                    disableCenter: true,
-                    enlargeCenterPage: true,
-                    height: context.height * .38,
-                    enlargeFactor: .6,
-                    aspectRatio: 2,
-                    viewportFraction: 0.5,
-                    initialPage: 6,
-                  ),
-                );
-              } else {
-                return Text("${state.moviesApi.errorMessage}",style: TextStyle(fontSize: 30,color: AppColors.white),);
-              }
-            },
-          ),
-          Image.asset(AppAssets.watchNow),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: [
-                Text("Action", style: context.textTheme.bodyLarge),
-                Spacer(),
-                InkWell(
-                  onTap: () {},
-                  child: Row(
-                    children: [
-                      Text("See More", style: context.textTheme.labelMedium),
-                      Icon(
-                        Icons.arrow_forward_outlined,
-                        size: 12,
-                        color: AppColors.lightOrange,
+                  } else if (state.moviesApi.status == AppStatus.success &&
+                      state.moviesApi.data != null) {
+                    final movies = state.moviesApi.data;
+        
+                    if (movies == null || movies.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "No movies available",
+                          style: TextStyle(fontSize: 30, color: AppColors.white),
+                        ),
+                      );
+                    }
+                    return CarouselSlider.builder(
+                      //length
+                      itemCount: state.moviesApi.data!.length,
+                      itemBuilder: (context, index, pageViewIndex) {
+                        return CustomMovieCard(
+                          movie: state.moviesApi.data![index],
+                          heightRatio: .38,
+                          widthRatio: .59,
+                        );
+                      },
+                      options: CarouselOptions(
+                        enableInfiniteScroll: false,
+                        autoPlay: false,
+                        disableCenter: true,
+                        enlargeCenterPage: true,
+                        height: context.height * .38,
+                        enlargeFactor: .6,
+                        aspectRatio: 2,
+                        viewportFraction: 0.5,
+                        initialPage: 6,
                       ),
-                    ],
-                  ),
+                    );
+                  } else {
+                    return Text(
+                      "${state.moviesApi.errorMessage}",
+                      style: TextStyle(fontSize: 30, color: AppColors.white),
+                    );
+                  }
+                },
+              ),
+              Image.asset(AppAssets.watchNow),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    Text("Action", style: context.textTheme.bodyLarge),
+                    Spacer(),
+                    InkWell(
+                      onTap: () {},
+                      child: Row(
+                        children: [
+                          Text("See More", style: context.textTheme.labelMedium),
+                          Icon(
+                            Icons.arrow_forward_outlined,
+                            size: 12,
+                            color: AppColors.lightOrange,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              BlocBuilder<MoviesCubit, MoviesState>(
+                bloc: watchNowCubit,
+                builder: (context, state) {
+                  if (state.moviesApi.isLoading) {
+                    return CircularProgressIndicator(
+                      color: AppColors.white,
+                    );
+                  } else if (state.moviesApi.isSuccess &&
+                      state.moviesApi.data != null) {
+                    return buildMovieWatchList(context, state.moviesApi.data!);
+                  } else {
+                    return Text(
+                      "${state.moviesApi.errorMessage}",
+                      style: TextStyle(fontSize: 30, color: AppColors.white),
+                    );
+                  }
+                },
+              ),
+            ],
           ),
-          buildMovieWatchList(context),
-        ],
+        ),
       ),
     );
   }
 
-  Widget buildMovieWatchList(BuildContext context) {
+  Widget buildMovieWatchList(BuildContext context, List<Movie> watchNowList) {
     return SizedBox(
       height: context.height * .24,
       child: ListView.builder(
-        itemCount: 10,
+        itemCount: watchNowList.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: CustomMovieCard(heightRatio: .24, widthRatio: .38),
+            child: CustomMovieCard(
+              movie: watchNowList[index],
+              heightRatio: .24,
+              widthRatio: .38,
+            ),
           );
         },
       ),

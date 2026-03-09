@@ -20,9 +20,26 @@ class _ApiClient implements ApiClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<MoviesResponse> loadMovies() async {
+  Future<MoviesResponse> loadMovies(
+    int? limit,
+    int? page,
+    String? genre,
+    String? queryTerm,
+    String? sortBy,
+    String? orderBy,
+    int? minimumRating,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'page': page,
+      r'genre': genre,
+      r'query_term': queryTerm,
+      r'sort_by': sortBy,
+      r'order_by': orderBy,
+      r'minimum_rating': minimumRating,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MoviesResponse>(

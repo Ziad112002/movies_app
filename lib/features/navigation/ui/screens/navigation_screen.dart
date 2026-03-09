@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movies/core/di/di.dart';
-import 'package:movies/features/navigation/ui/screens/cubit/movies_cubit.dart';
 import 'package:movies/features/navigation/ui/screens/tabs/explore/explore_tab.dart';
 import 'package:movies/features/navigation/ui/screens/tabs/home/home_tab.dart';
 import 'package:movies/features/navigation/ui/screens/tabs/profile/profile_tab.dart';
@@ -10,45 +7,27 @@ import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
 
 class NavigationScreen extends StatefulWidget {
-   const NavigationScreen({super.key});
-
+  const NavigationScreen({super.key});
   @override
   State<NavigationScreen> createState() => _NavigationScreenState();
 }
-
 class _NavigationScreenState extends State<NavigationScreen> {
- int _selectedIndex=0;
- List<Widget>tabs=[
-   HomeTab(),
-   SearchTab(),
-   ExploreTab(),
-   ProfileTab()
- ];
-MoviesCubit cubit=getIt();
-@override
-  void initState() {
-    super.initState();
-
-      cubit.loadMovies();
-
-  }
+  int _selectedIndex = 0;
+  List<Widget> tabs = [HomeTab(), SearchTab(), ExploreTab(), ProfileTab()];
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_)=> cubit,
-      child: Scaffold(
-          bottomNavigationBar: buildBottomNavigationBar(),
-        body:tabs[_selectedIndex] ,
-      ),
+    return Scaffold(
+      bottomNavigationBar: buildBottomNavigationBar(),
+      body: tabs[_selectedIndex],
     );
   }
 
   Widget buildBottomNavigationBar() {
     return Theme(
       data: ThemeData(
-          canvasColor: AppColors.softBlack,
+        canvasColor: AppColors.softBlack,
         splashColor: Colors.transparent,
-          highlightColor: Colors.transparent
+        highlightColor: Colors.transparent,
       ),
       child: ClipRRect(
         borderRadius: BorderRadiusGeometry.only(
@@ -56,30 +35,30 @@ MoviesCubit cubit=getIt();
           topRight: Radius.circular(24),
         ),
         child: BottomNavigationBar(
-          currentIndex:_selectedIndex,
+          currentIndex: _selectedIndex,
           unselectedItemColor: AppColors.white,
           selectedItemColor: AppColors.lightOrange,
           showSelectedLabels: false,
           showUnselectedLabels: false,
           elevation: 0,
-          onTap: ( index){
-            _selectedIndex=index;
-            setState(() {
-
-            });
-
+          onTap: (index) {
+            _selectedIndex = index;
+            setState(() {});
           },
           items: [
             buildBottomNavigationBarItem(
               ImageIcon(AssetImage(AppAssets.iconHome)),
               "Home",
-            ), buildBottomNavigationBarItem(
+            ),
+            buildBottomNavigationBarItem(
               ImageIcon(AssetImage(AppAssets.iconSearch)),
               "Search",
-            ), buildBottomNavigationBarItem(
+            ),
+            buildBottomNavigationBarItem(
               ImageIcon(AssetImage(AppAssets.iconExplore)),
               "Explore",
-            ), buildBottomNavigationBarItem(
+            ),
+            buildBottomNavigationBarItem(
               ImageIcon(AssetImage(AppAssets.iconProfile)),
               "Profile",
             ),
@@ -93,7 +72,6 @@ MoviesCubit cubit=getIt();
     Widget icon,
     String label,
   ) {
-    return BottomNavigationBarItem(
-        icon: icon, label: label);
+    return BottomNavigationBarItem(icon: icon, label: label);
   }
 }
