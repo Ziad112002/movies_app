@@ -1,10 +1,33 @@
-
 import 'package:movies/core/utils/app_assets.dart';
 
 abstract final class AppConstants {
-  static const baseUrl="https://movies-api.accel.li/api/v2/";
-  static const movieListEndpoint="list_movies.json";
-  static const List<String> avatars =[
+  static const baseUrl = "https://movies-api.accel.li/api/v2/";
+  static const movieListEndpoint = "list_movies.json";
+  static const List<String> allMovieGenres = [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Biography",
+    "Comedy",
+    "Crime",
+    "Documentary",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "History",
+    "Horror",
+    "Music",
+    "Musical",
+    "Mystery",
+    "News",
+    "Romance",
+    "Sci-Fi",
+    "Sport",
+    "Thriller",
+    "War",
+    "Western",
+  ];
+  static const List<String> avatars = [
     AppAssets.gamer1,
     AppAssets.gamer,
     AppAssets.gamer2,
@@ -15,6 +38,6 @@ abstract final class AppConstants {
     AppAssets.gamer7,
     AppAssets.gamer8,
   ];
-  static String defaultErrorMessage="Something went wrong, please try again later!";
-
+  static String defaultErrorMessage =
+      "Something went wrong, please try again later!";
 }
