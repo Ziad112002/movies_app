@@ -35,6 +35,11 @@ abstract final class AppTheme {
         color: Color(0xff282A28),
         fontWeight: FontWeight.w600,
       ),
+      bodyMedium: TextStyle(
+        fontSize: 20,
+        color: AppColors.white,
+        fontWeight: FontWeight.w600,
+      ),
       labelMedium: TextStyle(
         fontSize: 16,
         color: Color(0xffFFBB3B),
@@ -44,6 +49,11 @@ abstract final class AppTheme {
         color: AppColors.black,
         fontWeight: FontWeight.bold,
       ),
+displaySmall: TextStyle(
+  fontSize: 16,
+  color: Colors.white,
+  fontWeight: FontWeight.normal,
+),
       bodySmall: TextStyle(
         fontSize: 14,
         color: Colors.white,

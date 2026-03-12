@@ -91,20 +91,20 @@ class Torrent {
 
   factory Torrent.fromJson(Map<String, dynamic> json) {
     return Torrent(
-      url: json['url'] as String,
-      hash: json['hash'] as String,
-      quality: json['quality'] as String,
-      type: json['type'] as String,
-      isRepack: json['is_repack'] as String,
-      videoCodec: json['video_codec'] as String,
-      bitDepth: json['bit_depth'] as String,
-      audioChannels: json['audio_channels'] as String,
-      seeds: json['seeds'] as int,
-      peers: json['peers'] as int,
-      size: json['size'] as String,
-      sizeBytes: json['size_bytes'] as int,
-      dateUploaded: json['date_uploaded'] as String,
-      dateUploadedUnix: json['date_uploaded_unix'] as int,
+      url: json['url'] ??"",
+      hash: json['hash'] ??"",
+      quality: json['quality'] ??"",
+      type: json['type'] ??"",
+      isRepack: json['is_repack'] ??"",
+      videoCodec: json['video_codec'] ??"",
+      bitDepth: json['bit_depth'] ??"",
+      audioChannels: json['audio_channels'] ??"",
+      seeds: json['seeds'] ??0,
+      peers: json['peers']??0,
+      size: json['size'] ??"",
+      sizeBytes: json['size_bytes'] ??0,
+      dateUploaded: json['date_uploaded'] ??"",
+      dateUploadedUnix: json['date_uploaded_unix'] ??"",
     );
   }
 

@@ -15,7 +15,7 @@ class CustomMovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-Navigator.push(context, AppRoutes.movieDetailsScreen);
+Navigator.push(context, AppRoutes.movieDetailsScreen(movie!.movieId));
       },
       child: Stack(
         children: [
@@ -24,7 +24,7 @@ Navigator.push(context, AppRoutes.movieDetailsScreen);
             width: context.width*widthRatio,
             decoration:BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(image:movie!=null? NetworkImage(movie!.mediumCoverImage):AssetImage(AppAssets.onBoarding_1917),fit: .cover,)
+              image: DecorationImage(image:movie!=null? NetworkImage(movie!.largeCoverImage):AssetImage(AppAssets.onBoarding_1917),fit: .cover,)
             ) ,
           ),
           Positioned(

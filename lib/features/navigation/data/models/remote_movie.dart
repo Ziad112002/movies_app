@@ -119,3 +119,4 @@ class RemoteMovie {
     'date_uploaded_unix': dateUploadedUnix,
   };
 }
+

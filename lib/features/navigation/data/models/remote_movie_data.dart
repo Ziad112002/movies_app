@@ -15,9 +15,9 @@ class MovieData {
 
   factory MovieData.fromJson(Map<String, dynamic> json) {
     return MovieData(
-      movieCount: json['movie_count'] as int,
-      limit: json['limit'] as int,
-      pageNumber: json['page_number'] as int,
+      movieCount: json['movie_count'] ??0,
+      limit: json['limit'] ??0,
+      pageNumber: json['page_number'] ??0,
       movies: (json['movies'] as List<dynamic>? ??[])
           .map((e) => RemoteMovie.fromJson(e as Map<String, dynamic>))
           .toList(),

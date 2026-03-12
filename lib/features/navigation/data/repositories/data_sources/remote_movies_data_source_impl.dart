@@ -26,7 +26,7 @@ class RemoteMoviesDataSourceImpl extends RemoteMoviesDataSource {
       List<RemoteMovie> movies = moviesResponse.data.movies;
       return SuccessApiResult(movies);
     } on Exception catch (e) {
-      return ErrorApiResult(UnKnownErrors());
+      return ErrorApiResult(UnKnownErrors(errorMessage: e.toString()));
     }
   }
 }

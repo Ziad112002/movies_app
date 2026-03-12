@@ -1,6 +1,7 @@
 class Movie {
+  int movieId;
   double rating;
-  String mediumCoverImage;
-  Movie(this.rating,this.mediumCoverImage);
+  String largeCoverImage;
+  Movie(this.rating,this.largeCoverImage,this.movieId);
 
 }
