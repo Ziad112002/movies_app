@@ -12,7 +12,7 @@ class NavigationScreen extends StatefulWidget {
   State<NavigationScreen> createState() => _NavigationScreenState();
 }
 class _NavigationScreenState extends State<NavigationScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 3;
   List<Widget> tabs = [HomeTab(), SearchTab(), ExploreTab(), ProfileTab()];
   @override
   Widget build(BuildContext context) {

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:movies/core/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:movies/features/movie_details/ui/screens/movie_details_screen.dart';
-import 'package:movies/features/navigation/ui/screens/navigation_screen.dart';
+import 'package:movies/features/auth/ui/screens/forget_password/forget_password_screen.dart';
+import 'package:movies/features/auth/ui/screens/login/login_screen.dart';
 import 'core/di/di.dart';
 import 'firebase_options.dart';
 
 void main() async{
-  initDependencies();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  initDependencies();
+
   runApp(const MyApp());
 }
 
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.themeData,
-      home: NavigationScreen(),
+      home: LoginScreen(),
     );
   }
 }

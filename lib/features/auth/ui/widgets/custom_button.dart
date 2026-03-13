@@ -36,7 +36,9 @@ class CustomButton extends StatelessWidget {
         mainAxisAlignment: .center,
         children: [
           if (icon != null) ...[icon!, SizedBox(width: 9)],
-          Text(text, style: style??context.textTheme.bodyMedium),
+          Text(text, style: style??context.textTheme.bodyMedium?.copyWith(
+            color: AppColors.softBlack
+          )),
           if (icon2 != null) ...[ SizedBox(width: 9),icon2!],
         ],
       ),

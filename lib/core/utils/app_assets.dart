@@ -14,8 +14,7 @@ abstract final class AppAssets {
   static const String gamer7 = '${imagesPath}gamer(7).png';
   static const String gamer8 = '${imagesPath}gamer(8).png';
   static const String gamer = '${imagesPath}gamer.png';
-  static const String iconIdentification =
-      '${imagesPath}icon _Identification.png';
+  static const String iconIdentification = '${imagesPath}icon _Identification.png';
   static const String iconExplore = '${imagesPath}icon_explore.png';
   static const String iconEyeOff = '${imagesPath}icon_eye_off.png';
   static const String iconFolder = '${imagesPath}icon_folder.png';

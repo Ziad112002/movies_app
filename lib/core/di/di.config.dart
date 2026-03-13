@@ -9,11 +9,26 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
+import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/auth/data/mapper/auth_mapper.dart' as _i496;
+import '../../features/auth/data/repositories/auth_repos_impl.dart' as _i657;
+import '../../features/auth/data/repositories/remote_data_source/auth_remote_data_source.dart'
+    as _i876;
+import '../../features/auth/data/repositories/remote_data_source/auth_remote_data_source_impl.dart'
+    as _i259;
+import '../../features/auth/domain/repository/auth_repos.dart' as _i563;
+import '../../features/auth/domain/use_cases/current_user_use_case.dart'
+    as _i410;
+import '../../features/auth/domain/use_cases/login_use_case.dart' as _i1038;
+import '../../features/auth/domain/use_cases/logout_use_case.dart' as _i698;
+import '../../features/auth/domain/use_cases/sign_up_use_case.dart' as _i179;
+import '../../features/auth/ui/screens/cubit/auth_cubit.dart' as _i263;
 import '../../features/movie_details/data/mappers/movie_details_mapper.dart'
     as _i915;
 import '../../features/movie_details/data/repositories/data_sources/movie_details_data_source/movie_details_data_source.dart'
@@ -38,9 +53,9 @@ import '../../features/movie_details/domain/use_cases/movie_details_use_case.dar
 import '../../features/movie_details/domain/use_cases/similar_movies_use_case.dart'
     as _i953;
 import '../../features/movie_details/ui/screens/cubit/movie_details_cubit.dart'
-    as _i865;
+    as _i384;
 import '../../features/movie_details/ui/screens/cubit/movie_details_state.dart'
-    as _i469;
+    as _i575;
 import '../../features/navigation/data/mapper/movies_mapper.dart' as _i1001;
 import '../../features/navigation/data/repositories/data_sources/remote_movies_data_source.dart'
     as _i91;
@@ -68,13 +83,22 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final getItModule = _$GetItModule();
     gh.factory<_i895.Connectivity>(() => getItModule.getConnectivity());
-    gh.factory<_i361.Dio>(() => getItModule.getDio());
+    gh.factory<_i496.AuthMapper>(() => _i496.AuthMapper());
     gh.factory<_i915.MovieDetailsMapper>(() => _i915.MovieDetailsMapper());
     gh.factory<_i1001.MoviesMapper>(() => _i1001.MoviesMapper());
-    gh.factory<_i469.MovieDetailsState>(
-      () => _i469.MovieDetailsState(
+    gh.singleton<_i361.Dio>(() => getItModule.getDio());
+    gh.singleton<_i59.FirebaseAuth>(() => getItModule.getFirebaseAuth());
+    gh.singleton<_i974.FirebaseFirestore>(() => getItModule.getFirestore());
+    gh.factory<_i575.MovieDetailsState>(
+      () => _i575.MovieDetailsState(
         movieDetailsApi: gh<_i275.Resource<_i819.MovieDetails>>(),
         similarMoviesApi: gh<_i275.Resource<List<_i410.Movie>>>(),
+      ),
+    );
+    gh.factory<_i876.AuthRemoteDataSource>(
+      () => _i259.AuthRemoteDataSourceImpl(
+        gh<_i59.FirebaseAuth>(),
+        gh<_i974.FirebaseFirestore>(),
       ),
     );
     gh.singleton<_i652.ApiClient>(() => _i652.ApiClient(gh<_i361.Dio>()));
@@ -86,6 +110,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i91.RemoteMoviesDataSource>(
       () => _i83.RemoteMoviesDataSourceImpl(gh<_i652.ApiClient>()),
+    );
+    gh.factory<_i563.AuthRepos>(
+      () => _i657.AuthReposImpl(
+        gh<_i895.Connectivity>(),
+        gh<_i496.AuthMapper>(),
+        gh<_i876.AuthRemoteDataSource>(),
+      ),
     );
     gh.factory<_i721.SimilarMoviesDataSource>(
       () => _i819.SimilarMoviesDataSourceImpl(gh<_i652.ApiClient>()),
@@ -111,6 +142,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i915.MovieDetailsMapper>(),
       ),
     );
+    gh.factory<_i410.CurrentUserUseCase>(
+      () => _i410.CurrentUserUseCase(gh<_i563.AuthRepos>()),
+    );
+    gh.factory<_i1038.LoginUseCase>(
+      () => _i1038.LoginUseCase(gh<_i563.AuthRepos>()),
+    );
+    gh.factory<_i698.LogoutUseCase>(
+      () => _i698.LogoutUseCase(gh<_i563.AuthRepos>()),
+    );
+    gh.factory<_i179.SignUpUseCase>(
+      () => _i179.SignUpUseCase(gh<_i563.AuthRepos>()),
+    );
     gh.factory<_i729.MoviesUseCase>(
       () => _i729.MoviesUseCase(gh<_i27.MoviesRepository>()),
     );
@@ -120,8 +163,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1057.MovieDetailsUseCase>(
       () => _i1057.MovieDetailsUseCase(gh<_i431.MovieDetailsRepository>()),
     );
-    gh.factory<_i865.MovieDetailsCubit>(
-      () => _i865.MovieDetailsCubit(
+    gh.factory<_i263.AuthCubit>(
+      () => _i263.AuthCubit(
+        gh<_i179.SignUpUseCase>(),
+        gh<_i1038.LoginUseCase>(),
+        gh<_i698.LogoutUseCase>(),
+        gh<_i410.CurrentUserUseCase>(),
+      ),
+    );
+    gh.factory<_i384.MovieDetailsCubit>(
+      () => _i384.MovieDetailsCubit(
         gh<_i1057.MovieDetailsUseCase>(),
         gh<_i953.SimilarMoviesUseCase>(),
       ),

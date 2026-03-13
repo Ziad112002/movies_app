@@ -142,7 +142,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                                   return buildGridView(movies);
                                 } else {
                                   return Text(
-                                    "${movieDetailsState.errorMessage}",
+                                    "${similarState.errorMessage}",
                                     style: context.textTheme.headlineMedium,
                                   );
                                 }
