@@ -45,41 +45,43 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       },
       child: Scaffold(
         appBar: AppBar(title: Text('Forget Password')),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              Image.asset(AppAssets.forgotPassword),
-              SizedBox(height: context.height * .026),
-              CustomTextField(
-                controller: emailCtrl,
-                hintText: "Email",
-                prefixIcon: ImageIcon(
-                  AssetImage(AppAssets.iconEmail),
-                  color: AppColors.white,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                Image.asset(AppAssets.forgotPassword),
+                SizedBox(height: context.height * .026),
+                CustomTextField(
+                  controller: emailCtrl,
+                  hintText: "Email",
+                  prefixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconEmail),
+                    color: AppColors.white,
+                  ),
                 ),
-              ),
-              SizedBox(height: context.height * .026),
-
-              BlocBuilder<AuthCubit, AuthState>(
-                bloc: cubit,
-                builder: (context, state) {
-                  final forgotPass = state.loginServer;
-                  if (!forgotPass.isLoading) {
-                    return CustomButton(
-                      text: "Verify Email",
-                      onPress: () {
-                        cubit.forgotPass(emailCtrl.text.trim());
-                      },
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(color: AppColors.white),
-                    );
-                  }
-                },
-              ),
-            ],
+                SizedBox(height: context.height * .026),
+          
+                BlocBuilder<AuthCubit, AuthState>(
+                  bloc: cubit,
+                  builder: (context, state) {
+                    final forgotPass = state.loginServer;
+                    if (!forgotPass.isLoading) {
+                      return CustomButton(
+                        text: "Verify Email",
+                        onPressed: () {
+                          cubit.forgotPass(emailCtrl.text.trim());
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(color: AppColors.white),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

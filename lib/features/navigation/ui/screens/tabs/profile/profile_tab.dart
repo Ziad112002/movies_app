@@ -190,7 +190,7 @@ late UserEntity _userEntity;
         children: [
           Expanded(
             flex: 2,
-            child: CustomButton(text: "Edit Profile", onPress: () {
+            child: CustomButton(text: "Edit Profile", onPressed: () {
               Navigator.push(context, AppRoutes.profileDetailsScreen(_userEntity));
 
             }),
@@ -201,7 +201,7 @@ late UserEntity _userEntity;
             child: CustomButton(
               text: "Exit",
               icon2: Icon(Icons.exit_to_app_outlined,color: AppColors.white,),
-              onPress: onExitClick,
+              onPressed: onExitClick,
               background: AppColors.red,
               style: context.textTheme.labelLarge?.copyWith(
                 color: AppColors.white,

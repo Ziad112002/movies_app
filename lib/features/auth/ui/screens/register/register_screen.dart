@@ -6,6 +6,7 @@ import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
 import 'package:movies/core/constants/app_constants.dart';
 import 'package:movies/core/utils/app_routes.dart';
+import 'package:movies/core/utils/app_validators.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
 import 'package:movies/core/utils/resource.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
@@ -22,18 +23,26 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  TextEditingController emailCtrl = TextEditingController();
-  TextEditingController nameCtrl = TextEditingController();
-  TextEditingController phoneCtrl = TextEditingController();
-  TextEditingController passwordCtrl = TextEditingController();
-  late String avtarPath ;
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _nameCtrl = TextEditingController();
+  final TextEditingController _phoneCtrl = TextEditingController();
+  final TextEditingController _passCtrl = TextEditingController();
+  late String avtarPath;
   bool isObscure = true;
-  var formKey = GlobalKey<FormState>();
-  AuthCubit cubit=getIt();
+  final _formKey = GlobalKey<FormState>();
+  final AuthCubit _cubit=getIt();
+  @override
+  void dispose() {
+    _phoneCtrl.dispose();
+    _nameCtrl.dispose();
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit,AuthState>(
-      bloc: cubit,
+      bloc: _cubit,
       listener:(context,state){
         final result=state.signUpServer;
         if(result.isSuccess){
@@ -53,7 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Scaffold(
         appBar: AppBar(title: Text("Register")),
         body: Form(
-          key: formKey,
+          key: _formKey,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SingleChildScrollView(
@@ -64,7 +73,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     length: AppConstants.avatars.length,
                     itemBuilder: (context, itemIndex, pageViewIndex) {
                         avtarPath= AppConstants.avatars[itemIndex];
-
                       return Image.asset(
                         AppConstants.avatars[itemIndex],
                         fit: .contain,
@@ -72,8 +80,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   CustomTextField(
-                    controller: nameCtrl,
+                    controller: _nameCtrl,
                     hintText: "Name",
+                    validator:
+                      AppValidators.generalValidator
+                     ,
                     prefixIcon: ImageIcon(
                       AssetImage(AppAssets.iconIdentification),
                       color: Colors.white,
@@ -81,8 +92,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(height: context.height * .024),
                   CustomTextField(
-                    controller: emailCtrl,
+                    controller: _emailCtrl,
                     hintText: "Email",
+                    validator:
+                      AppValidators.emailValidator
+
+                    ,
                     prefixIcon: ImageIcon(
                       AssetImage(AppAssets.iconEmail),
                       color: Colors.white,
@@ -90,8 +105,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(height: context.height * .024),
                   CustomTextField(
-                    controller: passwordCtrl,
+                    controller: _passCtrl,
                     hintText: "Password",
+                    validator:AppValidators.passValidator,
                     isObscure: isObscure,
                     prefixIcon: ImageIcon(
                       AssetImage(AppAssets.iconLock),
@@ -105,6 +121,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: context.height * .024),
                   CustomTextField(
                     hintText: "Confirm Password",
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please re-enter your password';
+                      }
+                      // Comparison logic
+                      if (value != _passCtrl.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
                     isObscure: isObscure,
                     prefixIcon: ImageIcon(
                       AssetImage(AppAssets.iconLock),
@@ -117,8 +143,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(height: context.height * .024),
                   CustomTextField(
-                    controller: phoneCtrl,
+                    controller: _phoneCtrl,
                     hintText: "Phone Number",
+                    validator:           AppValidators.generalValidator,
                     prefixIcon: ImageIcon(
                       AssetImage(AppAssets.iconCall),
                       color: Colors.white,
@@ -126,14 +153,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(height: context.height * .024),
                 BlocBuilder<AuthCubit,AuthState>(
-                  bloc: cubit,
+                  bloc: _cubit,
                   builder: (context,state) {
                     final result=state.signUpServer;
                     if(!result.isLoading){
                       return CustomButton(
                           text: "Create Account",
-                          onPress: ()  {
-                          cubit.signUp(emailCtrl.text, passwordCtrl.text, nameCtrl.text, phoneCtrl.text, avtarPath);
+                          onPressed: ()  {
+                            if(!_formKey.currentState!.validate())return;
+                          _cubit.signUp(_emailCtrl.text, _passCtrl.text, _nameCtrl.text, _phoneCtrl.text, avtarPath);
                           }
                       );
                     }else{

@@ -10,15 +10,17 @@ class CustomButton extends StatelessWidget {
   final Color background;
   final Widget? icon;
   final Widget? icon2;
-  final VoidCallback? onPress;
+  final VoidCallback? onPressed;
+  final bool isBorder;
   const CustomButton({
     super.key,
     required this.text,
-    required this.onPress,
+    required this.onPressed,
     this.icon,
     this.icon2,
     this.background=AppColors.lightOrange,
      this.style,
+     this.isBorder=false,
   });
 
   @override
@@ -29,9 +31,12 @@ class CustomButton extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(16),
+            side:BorderSide(
+              color:isBorder?  AppColors.lightOrange:Colors.transparent,
+            )
           )
       ),
-      onPressed: onPress,
+      onPressed: onPressed,
       child: Row(
         mainAxisAlignment: .center,
         children: [

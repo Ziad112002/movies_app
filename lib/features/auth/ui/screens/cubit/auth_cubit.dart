@@ -8,6 +8,7 @@ import 'package:movies/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:movies/features/auth/domain/use_cases/login_with_google_use_case.dart';
 import 'package:movies/features/auth/domain/use_cases/logout_use_case.dart';
 import 'package:movies/features/auth/domain/use_cases/sign_up_use_case.dart';
+import 'package:movies/features/auth/domain/use_cases/update_account_use_case.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_state.dart';
 
 @injectable
@@ -18,7 +19,8 @@ class AuthCubit extends Cubit<AuthState> {
   final CurrentUserUseCase _currentUserUseCase;
   final LoginWithGoogleUseCase _loginWithGoogleUseCase;
   final ForgotPassUseCase _forgotPassUseCase;
-  final DeleteAccountUseCase _deleteAccountServer;
+  final DeleteAccountUseCase _deleteAccountUseCase;
+  final UpdateAccountUseCase _updateAccountUseCase;
   AuthCubit(
     this._signUpUseCase,
     this._loginUseCase,
@@ -26,7 +28,8 @@ class AuthCubit extends Cubit<AuthState> {
     this._currentUserUseCase,
     this._loginWithGoogleUseCase,
     this._forgotPassUseCase,
-    this._deleteAccountServer,
+    this._deleteAccountUseCase,
+    this._updateAccountUseCase,
   ) : super(
         AuthState(
           signUpServer: Resource.initial(),
@@ -36,6 +39,7 @@ class AuthCubit extends Cubit<AuthState> {
           loginWithGoogleServer: Resource.initial(),
           forgotPassServer: Resource.initial(),
           deleteAccountServer: Resource.initial(),
+          updateAccountServer: Resource.initial(),
         ),
       );
   Future<void> signUp(
@@ -136,7 +140,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> deleteAccount() async {
     emit(state.copyWith(deleteAccountServer: Resource.loading()));
-    var result = await _deleteAccountServer();
+    var result = await _deleteAccountUseCase();
     if (result.isSuccess) {
       emit(
         state.copyWith(deleteAccountServer: Resource.success(result.getData())),
@@ -145,6 +149,21 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           deleteAccountServer: Resource.error(result.error!.errorMessage),
+        ),
+      );
+    }
+  }
+  Future<void> updateAccount(String name,String phoneNumber,String avtarPath) async {
+    emit(state.copyWith(updateAccountServer: Resource.loading()));
+    var result = await _updateAccountUseCase(name,phoneNumber,avtarPath);
+    if (result.isSuccess) {
+      emit(
+        state.copyWith(updateAccountServer: Resource.success(result.getData())),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          updateAccountServer: Resource.error(result.error!.errorMessage),
         ),
       );
     }

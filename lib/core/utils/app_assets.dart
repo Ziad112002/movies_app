@@ -31,4 +31,11 @@ abstract final class AppAssets {
   static const String moviePosters = '${imagesPath}Movies Posters.png';
   static const String onBoarding_1917 = '${imagesPath}1917.png';
   static const String emptyList = '${imagesPath}empty_list.png';
+  static const String onboarding1917 = '${imagesPath}1917_onboarding.png';
+  static const String onboardingBadBoys = '${imagesPath}bad_boys_onboarding.png';
+  static const String onboardingAvengers = '${imagesPath}avengers_onboarding.png';
+  static const String onboardingStrange = '${imagesPath}dr-strang_onboarding.png';
+  static const String onboardingOppenheimer= '${imagesPath}oppenhimer_onboarding.png';
+  static const String onboardingMoviesPosters= '${imagesPath}movies_poser_onboarding.png';
+
 }

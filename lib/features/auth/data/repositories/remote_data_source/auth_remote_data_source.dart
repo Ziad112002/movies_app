@@ -10,5 +10,6 @@ abstract class AuthRemoteDataSource {
   Future<ApiResult<void>> deleteAccount();
 
   Future<ApiResult<RemoteUser>> getCurrentUser();
+  ApiResult<void> updateAccount(String name,String phoneNumber,String avtarPath);
 
 }

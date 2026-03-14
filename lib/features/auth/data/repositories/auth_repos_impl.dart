@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import 'package:movies/core/utils/api_result.dart';
 import 'package:movies/core/utils/app_errors.dart';
 import 'package:movies/core/utils/extensions/connectivity_extension.dart';
-import 'package:movies/core/utils/resource.dart';
 import 'package:movies/features/auth/data/mapper/auth_mapper.dart';
 import 'package:movies/features/auth/data/repositories/remote_data_source/auth_remote_data_source.dart';
 import 'package:movies/features/auth/domain/entity/user_entity.dart';
@@ -107,6 +106,20 @@ Future<ApiResult<void>> forgotPass(String email)async{
 Future<ApiResult<void>> deleteAccount()async{
   if(await _connectivity.isConnected){
     var result= await _authRemoteDataSource.deleteAccount();
+    if(result.isSuccess){
+
+      return SuccessApiResult(null);
+    }else{
+      return ErrorApiResult(UnKnownErrors(errorMessage: result.error!.errorMessage));
+    }
+  }else{
+    return ErrorApiResult(NetworkErrors());
+  }
+}
+@override
+  Future<ApiResult<void>> updateAccount(String name,String phoneNumber,String avtarPath)async{
+  if(await _connectivity.isConnected){
+    var result=  _authRemoteDataSource.updateAccount(name, phoneNumber, avtarPath);
     if(result.isSuccess){
 
       return SuccessApiResult(null);

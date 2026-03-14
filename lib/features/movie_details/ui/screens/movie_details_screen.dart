@@ -228,7 +228,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     return CustomButton(
       text: "Watch",
       background: AppColors.red,
-      onPress: (){
+      onPressed: (){
         _launchUrl(uri);
       },
     );

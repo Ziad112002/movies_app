@@ -89,7 +89,6 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
 
   }
-
   @override
   Future<ApiResult<void>> logout() async {
     try {
@@ -99,7 +98,6 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return ErrorApiResult(UnKnownErrors(errorMessage: e.toString()));
     }
   }
-
   @override
   Future<ApiResult<RemoteUser>> getCurrentUser() async {
     try {
@@ -136,6 +134,23 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       DocumentReference documentRef=_firestore.collection("users").doc(currentUser!.uid);
       await documentRef.delete();
       await currentUser.delete();
+      return SuccessApiResult(null);
+    } on FirebaseException catch (e) {
+      return ErrorApiResult(ServerErrors(errorMessage: e.message!));
+    }
+  }
+  @override
+  ApiResult<void> updateAccount(String name,String phoneNumber,String avtarPath){
+    try {
+      var currentUser= _auth.currentUser;
+      DocumentReference documentRef=_firestore.collection("users").doc(currentUser!.uid);
+       documentRef.update({
+        "avatarPath":avtarPath,
+        "name":name,
+        "phoneNumber":phoneNumber,
+
+      });
+
       return SuccessApiResult(null);
     } on FirebaseException catch (e) {
       return ErrorApiResult(ServerErrors(errorMessage: e.message!));

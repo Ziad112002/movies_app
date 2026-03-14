@@ -11,4 +11,5 @@ abstract class AuthRepos {
   Future<ApiResult<void>>logout();
   Future<ApiResult<UserEntity>>getCurrentUser();
   Future<ApiResult<void>> deleteAccount();
+  Future<ApiResult<void>> updateAccount(String name,String phoneNumber,String avtarPath);
 }

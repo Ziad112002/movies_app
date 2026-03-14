@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
 import 'package:movies/core/utils/app_routes.dart';
+import 'package:movies/core/utils/app_validators.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
 import 'package:movies/core/utils/resource.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
@@ -20,13 +21,18 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailCtrl = TextEditingController();
-  TextEditingController passwordCtrl = TextEditingController();
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _passCtrl = TextEditingController();
   AuthCubit loginCubit = getIt();
   AuthCubit loginWithGoogleCubit = getIt();
   bool isObscure = true;
-  var formKey = GlobalKey<FormState>();
-
+  final _formKey = GlobalKey<FormState>();
+  @override
+  void dispose() {
+    _passCtrl.dispose();
+    _emailCtrl.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit,AuthState>(
@@ -72,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Scaffold(
           body: SafeArea(
             child: Form(
-              key: formKey,
+              key: _formKey,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: SingleChildScrollView(
@@ -85,14 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: context.height * .07),
                       CustomTextField(
-                        controller: emailCtrl,
+                        controller: _emailCtrl,
+                        validator: AppValidators.emailValidator,
                         hintText: "Email",
                         prefixIcon: Image.asset(AppAssets.iconEmail),
                       ),
                       SizedBox(height: context.height * .024),
                       CustomTextField(
-                        controller: passwordCtrl,
+                        controller: _passCtrl,
                         hintText: "Password",
+                        validator: AppValidators.passValidator,
                         isObscure: isObscure,
                         prefixIcon: Image.asset(AppAssets.iconLock),
                         suffixIcon: Image.asset(AppAssets.iconEyeOff),
@@ -120,10 +128,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (!result.isLoading) {
                             return CustomButton(
                               text: "Login",
-                              onPress: () {
+                              onPressed: () {
+                                if(!_formKey.currentState!.validate()) return;
                                 loginCubit.login(
-                                  emailCtrl.text,
-                                  passwordCtrl.text,
+                                  _emailCtrl.text,
+                                  _passCtrl.text,
                                 );
                               },
                             );
@@ -171,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           final loginWithGoogleState=state.loginWithGoogleServer;
                           if(!loginWithGoogleState.isLoading){
                             return CustomButton(
-                              onPress: ()  {
+                              onPressed: ()  {
                                  loginWithGoogleCubit.loginWithGoogle();
                               },
                               text: 'Login With Google',
