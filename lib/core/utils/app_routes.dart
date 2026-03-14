@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies/features/auth/domain/entity/user_entity.dart';
 import 'package:movies/features/auth/ui/screens/forget_password/forget_password_screen.dart';
 import 'package:movies/features/auth/ui/screens/login/login_screen.dart';
 import 'package:movies/features/movie_details/ui/screens/movie_details_screen.dart';
@@ -15,7 +16,7 @@ abstract final class AppRoutes {
       MaterialPageRoute(builder: (_) => NavigationScreen());
   static MaterialPageRoute  movieDetailsScreen(int id) =>
       MaterialPageRoute(builder: (_) => MovieDetailsScreen(movieId: id,));
-  static MaterialPageRoute get profileDetailsScreen =>
-      MaterialPageRoute(builder: (_) => ProfileDetailsScreen());static MaterialPageRoute get forgetPasswordScreen =>
+  static MaterialPageRoute  profileDetailsScreen (UserEntity user)=>
+      MaterialPageRoute(builder: (_) => ProfileDetailsScreen(userInfo: user,));static MaterialPageRoute get forgetPasswordScreen =>
       MaterialPageRoute(builder: (_) => ForgetPasswordScreen());
 }

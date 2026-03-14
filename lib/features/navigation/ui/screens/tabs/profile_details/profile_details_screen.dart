@@ -1,101 +1,203 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:movies/core/di/di.dart';
 import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
 import 'package:movies/core/constants/app_constants.dart';
+import 'package:movies/core/utils/app_dialogs.dart';
+import 'package:movies/core/utils/app_routes.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
+import 'package:movies/features/auth/domain/entity/user_entity.dart';
+import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/ui/widgets/custom_button.dart';
 import 'package:movies/features/auth/ui/widgets/custom_text_field.dart';
 
-class ProfileDetailsScreen extends StatefulWidget {
-  const ProfileDetailsScreen({super.key});
+import '../../../../../../core/utils/resource.dart';
+import '../../../../../auth/ui/screens/cubit/auth_state.dart';
 
+class ProfileDetailsScreen extends StatefulWidget {
+  const ProfileDetailsScreen({super.key, required this.userInfo});
+  final UserEntity userInfo;
   @override
   State<ProfileDetailsScreen> createState() => _ProfileDetailsScreenState();
 }
 
 class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   int? _selectedIndex;
-  String? path;
+  late String path = widget.userInfo.avatarUrl;
+  AuthCubit resetPassCubit = getIt();
+  AuthCubit deleteAccountCubit = getIt();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Pick Avatar"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.lightOrange),
-          onPressed: () {},
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
-        child: Column(
-          crossAxisAlignment: .stretch,
-          children: [
-            InkWell(
-              onTap: () {
-                showModalBottomSheet(
-                  backgroundColor: Colors.transparent,
-                  context: context,
-                  builder: (context) => buildAvatarList(context),
-                );
-              },
-              child: Container(
-                height: context.height * .16,
-                width: context.height * .16,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      path == null
-                          ? AppAssets.gamer2
-                          : AppConstants.avatars[_selectedIndex!],
+    return BlocListener<AuthCubit, AuthState>(
+      bloc: deleteAccountCubit,
+      listener: (context, state) {
+        final deleteAccountState = state.deleteAccountServer;
+
+        if (deleteAccountState.isSuccess) {
+          Navigator.pushReplacement(context, AppRoutes.loginScreen);
+        } else if (deleteAccountState.status == AppStatus.error) {
+          Fluttertoast.showToast(
+            msg:
+                deleteAccountState.errorMessage ??
+                " Something went Wrong Pleas try again later",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      },
+      child: BlocListener<AuthCubit, AuthState>(
+        bloc: resetPassCubit,
+        listener: (context, state) {
+          final forgotPassState = state.forgotPassServer;
+          if (forgotPassState.isSuccess) {
+            Fluttertoast.showToast(
+              msg: "Password reset email sent! Check your inbox ✅",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 5,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+          } else if (forgotPassState.status == AppStatus.error) {
+            Fluttertoast.showToast(
+              msg:
+                  forgotPassState.errorMessage ??
+                  " Something went Wrong Pleas try again later",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(title: Text("Pick Avatar")),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+            child: Column(
+              crossAxisAlignment: .stretch,
+              children: [
+                InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      context: context,
+                      builder: (context) => buildAvatarList(context),
+                    );
+                  },
+                  child: Container(
+                    height: context.height * .16,
+                    width: context.height * .16,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: path.startsWith('assets/')
+                            ? AssetImage(path)
+                            : NetworkImage(path),
+                        fit: BoxFit.contain,
+                      ),
+                      shape: BoxShape.circle,
                     ),
-                    fit: BoxFit.contain,
                   ),
-                  shape: BoxShape.circle,
                 ),
-              ),
-            ),
-            SizedBox(height: context.height * .04),
-            CustomTextField(
-              hintText: "Name",
-              prefixIcon: ImageIcon(
-                AssetImage(AppAssets.iconUser),
-                color: AppColors.white,
-              ),
-            ),
-            SizedBox(height: context.height * .021),
-            CustomTextField(
-              hintText: "Phone Number",
-              prefixIcon: Icon(Icons.call, color: AppColors.white),
-            ),
-            SizedBox(height: context.height * .032),
+                SizedBox(height: context.height * .04),
+                CustomTextField(
+                  hintText: widget.userInfo.name,
+                  prefixIcon: ImageIcon(
+                    AssetImage(AppAssets.iconUser),
+                    color: AppColors.white,
+                  ),
+                ),
+                SizedBox(height: context.height * .021),
+                CustomTextField(
+                  hintText: widget.userInfo.phoneNumber,
+                  prefixIcon: Icon(Icons.call, color: AppColors.white),
+                ),
+                SizedBox(height: context.height * .032),
+                BlocBuilder<AuthCubit, AuthState>(
+                  bloc: resetPassCubit,
+                  builder: (context, state) {
+                    final forgotPass = state.loginServer;
+                    if (!forgotPass.isLoading) {
+                      return InkWell(
+                        onTap: () {
+                          resetPassCubit.forgotPass(widget.userInfo.email);
+                        },
+                        overlayColor: WidgetStatePropertyAll(
+                          Colors.transparent,
+                        ),
+                        child: Text(
+                          "Reset Password",
+                          textAlign: .start,
+                          style: context.textTheme.bodyLarge,
+                        ),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.white,
+                        ),
+                      );
+                    }
+                  },
+                ),
+                Spacer(),
+                BlocBuilder<AuthCubit, AuthState>(
+                  bloc: deleteAccountCubit,
+                  builder: (context, state) {
+                    final deleteAccount = state.deleteAccountServer;
+                    if (!deleteAccount.isLoading) {
+                      return buildDeleteAccountButton(
+                        onPress: () {
+                          showMessage(
+                            context,
+                            "are you sure?",
+                            title: "Delete Account",
+                            posText: "ok",
+                            onPosClick: () {
+                              deleteAccountCubit.deleteAccount();
+                            },
+                            negText: "no",
+                            onNegClick: (){
+                              Navigator.pop(context);
+                            }
+                          );
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.white,
+                        ),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(height: context.height * .021),
 
-            InkWell(
-              onTap: () {},
-              overlayColor: WidgetStatePropertyAll(Colors.transparent),
-              child: Text(
-                "Reset Password",
-                textAlign: .start,
-                style: context.textTheme.bodyLarge,
-              ),
+                buildUpdateAccountButton(),
+              ],
             ),
-            Spacer(),
-            buildDeleteAccountButton(context),
-            SizedBox(height: context.height * .021),
-
-            buildUpdateAccountButton(),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  CustomButton buildDeleteAccountButton(BuildContext context) {
+  CustomButton buildDeleteAccountButton({required void Function()? onPress}) {
     return CustomButton(
       background: AppColors.red,
       style: context.textTheme.bodyLarge,
       text: "Delete Account",
-      onPress: () {},
+      onPress: onPress,
     );
   }
 
@@ -105,8 +207,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   Widget buildAvatarList(BuildContext context) {
     return Container(
-      width: context.width *.94,
-      height: context.height *.42,
+      width: context.width * .94,
+      height: context.height * .42,
       decoration: BoxDecoration(
         color: AppColors.softBlack,
         borderRadius: BorderRadius.circular(24),
@@ -127,7 +229,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     );
   }
 
-  Widget buildAvatarContainer(String avatarPath, int index,) {
+  Widget buildAvatarContainer(String avatarPath, int index) {
     final isSelected = _selectedIndex == index;
     return InkWell(
       onTap: () {
@@ -137,7 +239,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         Navigator.pop(context);
       },
       child: Container(
-
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: isSelected

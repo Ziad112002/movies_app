@@ -6,6 +6,7 @@ import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
 import 'package:movies/core/utils/app_routes.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
+import 'package:movies/features/auth/domain/entity/user_entity.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_state.dart';
 import 'package:movies/features/auth/ui/widgets/custom_button.dart';
@@ -23,6 +24,7 @@ class _ProfileTabState extends State<ProfileTab> {
 final AuthCubit logoutCubit =getIt();
 
 final AuthCubit currentUserCubit =getIt();
+late UserEntity _userEntity;
 @override
   void initState() {
     super.initState();
@@ -74,6 +76,7 @@ final AuthCubit currentUserCubit =getIt();
                                 return Center(child: CircularProgressIndicator(color: AppColors.white,),);
                               }else if(currentUserState.isSuccess&&currentUserState.data!=null){
                                 var result =currentUserState.data;
+                                 _userEntity=result!;
                                 return Column(
                                   crossAxisAlignment: .stretch,
                                   children: [
@@ -158,7 +161,7 @@ final AuthCubit currentUserCubit =getIt();
           width: context.height * .13,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(avatarPath),
+              image:avatarPath.startsWith('assets/')?AssetImage(avatarPath):NetworkImage(avatarPath),
               fit: BoxFit.cover,
             ),
             shape: BoxShape.circle,
@@ -188,7 +191,7 @@ final AuthCubit currentUserCubit =getIt();
           Expanded(
             flex: 2,
             child: CustomButton(text: "Edit Profile", onPress: () {
-              Navigator.push(context, AppRoutes.profileDetailsScreen);
+              Navigator.push(context, AppRoutes.profileDetailsScreen(_userEntity));
 
             }),
           ),

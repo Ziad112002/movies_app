@@ -25,7 +25,12 @@ import '../../features/auth/data/repositories/remote_data_source/auth_remote_dat
 import '../../features/auth/domain/repository/auth_repos.dart' as _i563;
 import '../../features/auth/domain/use_cases/current_user_use_case.dart'
     as _i410;
+import '../../features/auth/domain/use_cases/delete_account_use_case.dart'
+    as _i353;
+import '../../features/auth/domain/use_cases/forgot_pass_use_case.dart' as _i68;
 import '../../features/auth/domain/use_cases/login_use_case.dart' as _i1038;
+import '../../features/auth/domain/use_cases/login_with_google_use_case.dart'
+    as _i490;
 import '../../features/auth/domain/use_cases/logout_use_case.dart' as _i698;
 import '../../features/auth/domain/use_cases/sign_up_use_case.dart' as _i179;
 import '../../features/auth/ui/screens/cubit/auth_cubit.dart' as _i263;
@@ -145,8 +150,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i410.CurrentUserUseCase>(
       () => _i410.CurrentUserUseCase(gh<_i563.AuthRepos>()),
     );
+    gh.factory<_i353.DeleteAccountUseCase>(
+      () => _i353.DeleteAccountUseCase(gh<_i563.AuthRepos>()),
+    );
+    gh.factory<_i68.ForgotPassUseCase>(
+      () => _i68.ForgotPassUseCase(gh<_i563.AuthRepos>()),
+    );
     gh.factory<_i1038.LoginUseCase>(
       () => _i1038.LoginUseCase(gh<_i563.AuthRepos>()),
+    );
+    gh.factory<_i490.LoginWithGoogleUseCase>(
+      () => _i490.LoginWithGoogleUseCase(gh<_i563.AuthRepos>()),
     );
     gh.factory<_i698.LogoutUseCase>(
       () => _i698.LogoutUseCase(gh<_i563.AuthRepos>()),
@@ -157,19 +171,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i729.MoviesUseCase>(
       () => _i729.MoviesUseCase(gh<_i27.MoviesRepository>()),
     );
-    gh.factory<_i953.SimilarMoviesUseCase>(
-      () => _i953.SimilarMoviesUseCase(gh<_i218.SimilarMoviesRepository>()),
-    );
-    gh.factory<_i1057.MovieDetailsUseCase>(
-      () => _i1057.MovieDetailsUseCase(gh<_i431.MovieDetailsRepository>()),
-    );
     gh.factory<_i263.AuthCubit>(
       () => _i263.AuthCubit(
         gh<_i179.SignUpUseCase>(),
         gh<_i1038.LoginUseCase>(),
         gh<_i698.LogoutUseCase>(),
         gh<_i410.CurrentUserUseCase>(),
+        gh<_i490.LoginWithGoogleUseCase>(),
+        gh<_i68.ForgotPassUseCase>(),
+        gh<_i353.DeleteAccountUseCase>(),
       ),
+    );
+    gh.factory<_i953.SimilarMoviesUseCase>(
+      () => _i953.SimilarMoviesUseCase(gh<_i218.SimilarMoviesRepository>()),
+    );
+    gh.factory<_i1057.MovieDetailsUseCase>(
+      () => _i1057.MovieDetailsUseCase(gh<_i431.MovieDetailsRepository>()),
     );
     gh.factory<_i384.MovieDetailsCubit>(
       () => _i384.MovieDetailsCubit(

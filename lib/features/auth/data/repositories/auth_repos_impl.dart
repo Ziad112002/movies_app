@@ -43,6 +43,25 @@ if(await _connectivity.isConnected){
 
 }
 @override
+  Future<ApiResult<void>>loginWithGoogle() async{
+ if(await _connectivity.isConnected){
+   var result=await _authRemoteDataSource.loginWithGoogle();
+   if(result.isSuccess){
+     return result;
+   }else{
+     return ErrorApiResult(UnKnownErrors(errorMessage: result.error!.errorMessage));
+   }
+
+ }else{
+   return ErrorApiResult(NetworkErrors());
+ }
+
+
+
+
+}
+
+@override
   Future<ApiResult<void>>logout()async{
   var result= await _authRemoteDataSource.logout();
 if(await _connectivity.isConnected){
@@ -70,4 +89,33 @@ if(await _connectivity.isConnected){
     return ErrorApiResult(NetworkErrors());
   }
 }
+@override
+Future<ApiResult<void>> forgotPass(String email)async{
+  if(await _connectivity.isConnected){
+    var result= await _authRemoteDataSource.forgotPass(email);
+    if(result.isSuccess){
+
+      return SuccessApiResult(null);
+    }else{
+      return ErrorApiResult(UnKnownErrors(errorMessage: result.error!.errorMessage));
+    }
+  }else{
+    return ErrorApiResult(NetworkErrors());
+  }
+}
+@override
+Future<ApiResult<void>> deleteAccount()async{
+  if(await _connectivity.isConnected){
+    var result= await _authRemoteDataSource.deleteAccount();
+    if(result.isSuccess){
+
+      return SuccessApiResult(null);
+    }else{
+      return ErrorApiResult(UnKnownErrors(errorMessage: result.error!.errorMessage));
+    }
+  }else{
+    return ErrorApiResult(NetworkErrors());
+  }
+}
+
 }
