@@ -87,7 +87,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                           children: [
                             buildHeader(),
                             SizedBox(height: context.height * .2),
-                            buildPlayButton(),
+                            buildPlayButton(data.trailerCode),
                             SizedBox(height: context.height * .2),
                             Text(
                               data.title,
@@ -210,7 +210,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  Widget buildPlayButton() => CircleAvatar(
+  Widget buildPlayButton(String trailerId) => CircleAvatar(
     backgroundColor: AppColors.lightOrange,
     radius: 45,
     child: CircleAvatar(
@@ -219,11 +219,26 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
       child: CircleAvatar(
         backgroundColor: AppColors.lightOrange,
         radius: 30,
-        child: Icon(Icons.play_arrow, color: AppColors.white, size: 40),
+        child: IconButton(icon: Icon(Icons.play_arrow,size: 40,), color: AppColors.white, onPressed:(){
+          _launchYouTubeVideo(trailerId);
+
+        },),
       ),
     ),
   );
+  Future<void> _launchYouTubeVideo(String videoId) async {
 
+    final Uri youtubeUri = Uri.parse("https://www.youtube.com/watch?v=$videoId");
+
+    if (await canLaunchUrl(youtubeUri)) {
+      await launchUrl(
+        youtubeUri,
+        mode: LaunchMode.externalApplication, // This forces it to open in the YouTube App
+      );
+    } else {
+      throw 'Could not launch $youtubeUri';
+    }
+  }
   Widget buildWatchButton(String uri) {
     return CustomButton(
       text: "Watch",

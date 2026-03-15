@@ -78,15 +78,16 @@ late UserEntity _userEntity;
                                 var result =currentUserState.data;
                                  _userEntity=result!;
                                 return Column(
-                                  crossAxisAlignment: .stretch,
+                                  crossAxisAlignment: .start,
                                   children: [
-                                  buildProfileAvatarRow(context,result!.avatarUrl),
+                                  buildProfileAvatarRow(context,result.avatarUrl),
                                   SizedBox(height: 15),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 27.0),
+                                  Container(
+                                    alignment: .center,
+                                    width: context.height * .21,
                                     child: Text(
                                       result.name,
-                                      textAlign: .start,
+                                      textAlign: .center,
                                       style: context.textTheme.displayMedium?.copyWith(
                                         color: AppColors.white,
                                       ),
@@ -190,10 +191,29 @@ late UserEntity _userEntity;
         children: [
           Expanded(
             flex: 2,
-            child: CustomButton(text: "Edit Profile", onPressed: () {
-              Navigator.push(context, AppRoutes.profileDetailsScreen(_userEntity));
+            child: BlocBuilder<AuthCubit,AuthState>(
+              bloc: currentUserCubit,
+              builder: (context,state) {
+                final currentUserState=state.currentUserServer;
+                if(currentUserState.isLoading){
+                  return Center(child: CircularProgressIndicator(color: AppColors.white,),);
+                }else if(currentUserState.isSuccess&&currentUserState.data!=null){
+                  var result =currentUserState.data;
+                  _userEntity=result!;
+                  return   CustomButton(text: "Edit Profile", onPressed: ()async {
+                    await Navigator.push(context, AppRoutes.profileDetailsScreen(_userEntity));
+             currentUserCubit.getCurrentUser();
+                  });
+                }else{
+                  return Text(
+                    "${currentUserState.errorMessage}",
+                    style: context.textTheme.headlineMedium,
+                  );
+                }
 
-            }),
+              }
+
+            ),
           ),
           SizedBox(width: 10),
           Expanded(

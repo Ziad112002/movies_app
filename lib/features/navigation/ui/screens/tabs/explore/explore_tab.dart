@@ -48,13 +48,13 @@ class _ExploreTabState extends State<ExploreTab> {
                   });
                   _loadMoviesForGenre(_selectedGenre);
                 },
+                labelPadding: EdgeInsets.symmetric(horizontal: 4.0),
                 tabAlignment: .start,
                 isScrollable: true,
                 indicatorColor: Colors.transparent,
                 dividerColor: Colors.transparent,
                 dividerHeight: 0,
                 tabs: _allGenres.asMap().entries.map((entry) {
-                  // function as map show me current index and value
                   int index = entry.key;
                    final genre = entry.value;
                   bool isActive = _selectedIndex == index;

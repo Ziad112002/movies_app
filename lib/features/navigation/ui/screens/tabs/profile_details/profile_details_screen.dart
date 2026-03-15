@@ -117,126 +117,129 @@ final  TextEditingController _nameCtrl = TextEditingController();
                 horizontal: 8.0,
                 vertical: 16,
               ),
-              child: Column(
-                crossAxisAlignment: .stretch,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        context: context,
-                        builder: (context) => buildAvatarList(),
-                      );
-                    },
-                    child: Container(
-                      height: context.height * .16,
-                      width: context.height * .16,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: path.startsWith('assets/')
-                              ? AssetImage(path)
-                              : NetworkImage(path),
-                          fit: BoxFit.contain,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: .stretch,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          context: context,
+                          builder: (context) => buildAvatarList(),
+                        );
+                      },
+                      child: Container(
+                        height: context.height * .16,
+                        width: context.height * .16,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: path.startsWith('assets/')
+                                ? AssetImage(path)
+                                : NetworkImage(path),
+                            fit: BoxFit.contain,
+                          ),
+                          shape: BoxShape.circle,
                         ),
-                        shape: BoxShape.circle,
                       ),
                     ),
-                  ),
-                  SizedBox(height: context.height * .04),
-                  CustomTextField(
-                    hintText: widget.userInfo.name,
-                    controller: _nameCtrl,
-                    prefixIcon: ImageIcon(
-                      AssetImage(AppAssets.iconUser),
-                      color: AppColors.white,
+                    SizedBox(height: context.height * .04),
+                    CustomTextField(
+                      hintText: widget.userInfo.name,
+                      controller: _nameCtrl,
+                      prefixIcon: ImageIcon(
+                        AssetImage(AppAssets.iconUser),
+                        color: AppColors.white,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: context.height * .021),
-                  CustomTextField(
-                    hintText: widget.userInfo.phoneNumber,
-                    controller:_phoneCtrl,
-                    prefixIcon: Icon(Icons.call, color: AppColors.white),
-                  ),
-                  SizedBox(height: context.height * .032),
-                  BlocBuilder<AuthCubit, AuthState>(
-                    bloc: resetPassCubit,
-                    builder: (context, state) {
-                      final forgotPass = state.loginServer;
-                      if (!forgotPass.isLoading) {
-                        return InkWell(
-                          onTap: () {
-                            resetPassCubit.forgotPass(widget.userInfo.email);
-                          },
-                          overlayColor: WidgetStatePropertyAll(
-                            Colors.transparent,
-                          ),
-                          child: Text(
-                            "Reset Password",
-                            textAlign: .start,
-                            style: context.textTheme.bodyLarge,
-                          ),
-                        );
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.white,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  Spacer(),
-                  BlocBuilder<AuthCubit, AuthState>(
-                    bloc: deleteAccountCubit,
-                    builder: (context, state) {
-                      final deleteAccount = state.deleteAccountServer;
-                      if (!deleteAccount.isLoading) {
-                        return buildDeleteAccountButton(
-                          onPress: () {
-                            showMessage(
-                              context,
-                              "are you sure?",
-                              title: "Delete Account",
-                              posText: "ok",
-                              onPosClick: () {
-                                deleteAccountCubit.deleteAccount();
-                              },
-                              negText: "no",
-                              onNegClick: () {
-                                Navigator.pop(context);
-                              },
-                            );
-                          },
-                        );
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.white,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  SizedBox(height: context.height * .021),
+                    SizedBox(height: context.height * .021),
+                    CustomTextField(
+                      hintText: widget.userInfo.phoneNumber,
+                      controller:_phoneCtrl,
+                      prefixIcon: Icon(Icons.call, color: AppColors.white),
+                    ),
+                    SizedBox(height: context.height * .032),
+                    BlocBuilder<AuthCubit, AuthState>(
+                      bloc: resetPassCubit,
+                      builder: (context, state) {
+                        final forgotPass = state.loginServer;
+                        if (!forgotPass.isLoading) {
+                          return InkWell(
+                            onTap: () {
+                              resetPassCubit.forgotPass(widget.userInfo.email);
+                            },
+                            overlayColor: WidgetStatePropertyAll(
+                              Colors.transparent,
+                            ),
+                            child: Text(
+                              "Reset Password",
+                              textAlign: .start,
+                              style: context.textTheme.bodyLarge,
+                            ),
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.white,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    SizedBox(height: context.height * .26),
 
-                  BlocBuilder<AuthCubit, AuthState>(
-                    bloc: updateAccountCubit,
-                    builder: (context, state) {
-                      final updateAccountState = state.updateAccountServer;
-                      if (!updateAccountState.isLoading) {
-                        return buildUpdateAccountButton(onPress: () {
-                          updateAccountCubit.updateAccount(_nameCtrl.text.isEmpty?widget.userInfo.name:_nameCtrl.text, _phoneCtrl.text.isEmpty?widget.userInfo.phoneNumber:_phoneCtrl.text, path);
-                        });
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.white,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
+                    BlocBuilder<AuthCubit, AuthState>(
+                      bloc: deleteAccountCubit,
+                      builder: (context, state) {
+                        final deleteAccount = state.deleteAccountServer;
+                        if (!deleteAccount.isLoading) {
+                          return buildDeleteAccountButton(
+                            onPress: () {
+                              showMessage(
+                                context,
+                                "are you sure?",
+                                title: "Delete Account",
+                                posText: "ok",
+                                onPosClick: () {
+                                  deleteAccountCubit.deleteAccount();
+                                },
+                                negText: "no",
+                                onNegClick: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.white,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    SizedBox(height: context.height * .021),
+
+                    BlocBuilder<AuthCubit, AuthState>(
+                      bloc: updateAccountCubit,
+                      builder: (context, state) {
+                        final updateAccountState = state.updateAccountServer;
+                        if (!updateAccountState.isLoading) {
+                          return buildUpdateAccountButton(onPress: () {
+                            updateAccountCubit.updateAccount(_nameCtrl.text.isEmpty?widget.userInfo.name:_nameCtrl.text, _phoneCtrl.text.isEmpty?widget.userInfo.phoneNumber:_phoneCtrl.text, path);
+                          });
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.white,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

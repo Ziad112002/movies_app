@@ -3,6 +3,7 @@ import 'package:movies/core/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:movies/features/auth/ui/screens/forget_password/forget_password_screen.dart';
 import 'package:movies/features/auth/ui/screens/login/login_screen.dart';
+import 'package:movies/features/navigation/ui/screens/navigation_screen.dart';
 import 'package:movies/features/splash_onboarding/screens/onboarding_screen.dart';
 import 'core/di/di.dart';
 import 'firebase_options.dart';

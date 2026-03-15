@@ -69,18 +69,25 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
         final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
          UserCredential userCredential=await _auth.signInWithCredential(credential);
-         final remoteUser=RemoteUser(
-           id: userCredential.user!.uid,
-           email: userCredential.user!.email,
-           name: userCredential.user!.displayName,
-           avatarPath: userCredential.user!.photoURL,
-           phoneNumber: userCredential.user?.phoneNumber??"Un Known"
-         );
-        await _firestore
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set(remoteUser.toJson());
-        return SuccessApiResult(null);
+        DocumentSnapshot documentSnapshot = await _firestore.collection('users').doc(userCredential.user!.uid).get();
+        if(documentSnapshot.exists){
+          return SuccessApiResult(null);
+        }else{
+          final remoteUser=RemoteUser(
+              id: userCredential.user!.uid,
+              email: userCredential.user!.email,
+              name: userCredential.user!.displayName,
+              avatarPath: userCredential.user!.photoURL,
+              phoneNumber: userCredential.user?.phoneNumber??"Un Known"
+          );
+          await _firestore
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set(remoteUser.toJson());
+          return SuccessApiResult(null);
+        }
+
+
       } on FirebaseException catch (e) {
       return ErrorApiResult(ServerErrors(errorMessage: e.message!));
       }
