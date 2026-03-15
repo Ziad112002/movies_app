@@ -1,33 +1,94 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:movies/core/utils/resource.dart';
+import 'package:movies/features/movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
+import 'package:movies/features/movie_details/domain/use_cases/check_movie_exists_use_case.dart';
+import 'package:movies/features/movie_details/domain/use_cases/create_movie_in_fire_store_use_case.dart';
 import 'package:movies/features/movie_details/domain/use_cases/movie_details_use_case.dart';
 import 'package:movies/features/movie_details/domain/use_cases/similar_movies_use_case.dart';
 import 'package:movies/features/movie_details/ui/screens/cubit/movie_details_state.dart';
+
 @injectable
 class MovieDetailsCubit extends Cubit<MovieDetailsState> {
   final MovieDetailsUseCase _movieDetailsUseCase;
   final SimilarMoviesUseCase _similarMoviesUseCase;
-  MovieDetailsCubit(this._movieDetailsUseCase,this._similarMoviesUseCase):super(MovieDetailsState(movieDetailsApi: Resource.initial(),similarMoviesApi: Resource.initial()));
-  Future<void>loadMovieDetails(int id)async{
+  final CreateMovieInFireStoreUseCase _createMovieInFireStoreUseCase;
+  final CheckMovieExistsUseCase _checkMovieExistsUseCase;
+  MovieDetailsCubit(
+    this._movieDetailsUseCase,
+    this._similarMoviesUseCase,
+    this._createMovieInFireStoreUseCase,
+    this._checkMovieExistsUseCase,
+  ) : super(
+        MovieDetailsState(
+          movieDetailsApi: Resource.initial(),
+          similarMoviesApi: Resource.initial(),
+          createMovieServer: Resource.initial(),
+          checkMovieServer: Resource.initial(),
+        ),
+      );
+  Future<void> loadMovieDetails(int id) async {
     emit(state.copyWith(movieDetailsApi: Resource.loading()));
-    var result=await _movieDetailsUseCase(id);
-    if(result.isSuccess){
+    var result = await _movieDetailsUseCase(id);
+    if (result.isSuccess) {
       emit(state.copyWith(movieDetailsApi: Resource.success(result.getData())));
-    }else{
-    emit(state.copyWith(movieDetailsApi: Resource.error(result.error!.errorMessage)));
+    } else {
+      emit(
+        state.copyWith(
+          movieDetailsApi: Resource.error(result.error!.errorMessage),
+        ),
+      );
     }
-
   }
-  Future<void>loadSimilarMovies(int id)async{
+
+  Future<void> loadSimilarMovies(int id) async {
     emit(state.copyWith(similarMoviesApi: Resource.loading()));
-    var result=await _similarMoviesUseCase(id);
-    if(result.isSuccess){
-      emit(state.copyWith(similarMoviesApi: Resource.success(result.getData())));
-    }else{
-      emit(state.copyWith(similarMoviesApi: Resource.error(result.error!.errorMessage)));
+    var result = await _similarMoviesUseCase(id);
+    if (result.isSuccess) {
+      emit(
+        state.copyWith(similarMoviesApi: Resource.success(result.getData())),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          similarMoviesApi: Resource.error(result.error!.errorMessage),
+        ),
+      );
     }
   }
 
+  Future<void> createMovieInFirebase(
+    StoredMovieModel movie,
+    String collectionName,
+  ) async {
+    emit(state.copyWith(createMovieServer: Resource.loading()));
+    var result = await _createMovieInFireStoreUseCase(movie, collectionName);
+    if (result.isSuccess) {
+      emit(
+        state.copyWith(createMovieServer: Resource.success(result.getData())),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          createMovieServer: Resource.error(result.error!.errorMessage),
+        ),
+      );
+    }
+  }
 
+  Future<void> checkMovieExists(int movieId, String collectionName) async {
+    emit(state.copyWith(checkMovieServer: Resource.loading()));
+    var result = await _checkMovieExistsUseCase(movieId, collectionName);
+    if (result.isSuccess) {
+      emit(
+        state.copyWith(checkMovieServer: Resource.success(result.getData())),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          createMovieServer: Resource.error(result.error!.errorMessage),
+        ),
+      );
+    }
+  }
 }

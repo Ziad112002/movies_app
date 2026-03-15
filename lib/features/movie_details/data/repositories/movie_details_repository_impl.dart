@@ -11,6 +11,7 @@ import 'package:movies/features/movie_details/domain/repository/movie_details_re
 
 import '../../../navigation/data/mapper/movies_mapper.dart';
 import '../../../navigation/domain/models/movie.dart';
+import 'data_sources/models/stored_movie_model.dart';
 @Injectable(as: MovieDetailsRepository)
 class MovieDetailsRepositoryImpl extends MovieDetailsRepository {
   final MovieDetailsDataSource _movieDetailsDataSource;
@@ -48,4 +49,31 @@ class MovieDetailsRepositoryImpl extends MovieDetailsRepository {
       return ErrorApiResult(NetworkErrors());
     }
   }
-}
+  @override
+  Future<ApiResult<void>> createMovieInFirestore(StoredMovieModel movie,String collectionName)async {
+    if(await _connectivity.isConnected){
+      var result=await _movieDetailsDataSource.createMovieInFireStore(movie,collectionName);
+      if(result.isSuccess){
+        return result;
+      }else{
+        return result;
+      }
+    }else{
+      return ErrorApiResult(NetworkErrors());
+    }
+  }
+  @override
+  Future<ApiResult<bool>>checkMovieExists(int movieID,String collectionName)async{
+    if(await _connectivity.isConnected){
+      final result=await _movieDetailsDataSource.checkMovieExists(movieID,collectionName);
+      if(result.isSuccess){
+        return SuccessApiResult(result.getData());
+      }else{
+        return ErrorApiResult(result.error);
+      }
+    }else{
+      return ErrorApiResult(NetworkErrors());
+    }
+  }
+
+  }

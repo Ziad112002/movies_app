@@ -1,4 +1,5 @@
 import 'package:movies/core/utils/api_result.dart';
+import '../../../movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
 import '../models/movie.dart';
 
 abstract class MoviesRepository {
@@ -9,4 +10,6 @@ abstract class MoviesRepository {
       String? sortBy,
       String? orderBy,
       int? minimumRating,);
+  Future<ApiResult<List<StoredMovieModel>>> loadMoviesFromFirestore(String collectionName);
+
 }

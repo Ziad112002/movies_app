@@ -56,7 +56,7 @@ class _HomeTabState extends State<HomeTab> {
              ),
            ),
            errorWidget: (context, url, error) =>
-               Icon(Icons.error, color: AppColors.red),
+               Icon(Icons.error, color: Colors.transparent),
            fit: BoxFit.cover,
            width:
            double.infinity,

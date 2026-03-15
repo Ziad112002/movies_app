@@ -1,4 +1,5 @@
 import 'package:movies/core/utils/api_result.dart';
+import 'package:movies/features/movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
 import 'package:movies/features/navigation/data/models/remote_movie.dart';
 
 abstract class RemoteMoviesDataSource {
@@ -11,5 +12,6 @@ abstract class RemoteMoviesDataSource {
       String? orderBy,
       int? minimumRating,
       );
+  Future<ApiResult<List<StoredMovieModel>>> loadMoviesFromFirestore(String collectionName);
 
 }

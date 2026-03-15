@@ -8,6 +8,8 @@ import 'package:movies/features/navigation/data/repositories/data_sources/remote
 import 'package:movies/features/navigation/domain/models/movie.dart';
 import 'package:movies/features/navigation/domain/repository/movies_repository.dart';
 
+import '../../../movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
+
 @Injectable(as: MoviesRepository)
 class MoviesRepositoryImpl extends MoviesRepository {
   final Connectivity _connectivity;
@@ -50,4 +52,19 @@ class MoviesRepositoryImpl extends MoviesRepository {
       return ErrorApiResult(NetworkErrors());
     }
   }
+  @override
+  Future<ApiResult<List<StoredMovieModel>>> loadMoviesFromFirestore(String collectionName) async{
+    if (await _connectivity.isConnected) {
+      final result = await _remoteMoviesDataSource.loadMoviesFromFirestore(collectionName);
+      if (result.isSuccess) {
+
+        return SuccessApiResult(result.getData()??[]);
+      } else {
+        return ErrorApiResult(result.error);
+      }
+    } else {
+      return ErrorApiResult(NetworkErrors());
+    }
+  }
+
 }

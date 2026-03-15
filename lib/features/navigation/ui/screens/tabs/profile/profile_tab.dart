@@ -11,6 +11,9 @@ import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_state.dart';
 import 'package:movies/features/auth/ui/widgets/custom_button.dart';
 import 'package:movies/features/auth/ui/widgets/custom_movie_card.dart';
+import 'package:movies/features/movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
+import 'package:movies/features/navigation/ui/screens/cubit/movies_cubit.dart';
+import 'package:movies/features/navigation/ui/screens/cubit/movies_state.dart';
 import '../../../../../../core/utils/resource.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -21,20 +24,24 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-final AuthCubit logoutCubit =getIt();
+final AuthCubit _logoutCubit =getIt();
 
-final AuthCubit currentUserCubit =getIt();
+final AuthCubit _currentUserCubit =getIt();
+final MoviesCubit _watchListCubit=getIt();
+final MoviesCubit _historyListCubit=getIt();
 late UserEntity _userEntity;
 @override
   void initState() {
     super.initState();
-    currentUserCubit.getCurrentUser();
+    _currentUserCubit.getCurrentUser();
+    _watchListCubit.loadFirestoreMovies("watchList");
+    _historyListCubit.loadFirestoreMovies("historyList");
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit,AuthState>(
-      bloc: logoutCubit,
+      bloc: _logoutCubit,
       listener: (context,state){
         final result=state.logoutServer;
         if(result.isSuccess){
@@ -69,7 +76,7 @@ late UserEntity _userEntity;
                         crossAxisAlignment: .stretch,
                         children: [
                           BlocBuilder<AuthCubit,AuthState>(
-                            bloc: currentUserCubit,
+                            bloc: _currentUserCubit,
                             builder: (context,state) {
                               final currentUserState=state.currentUserServer;
                               if(currentUserState.isLoading){
@@ -84,7 +91,7 @@ late UserEntity _userEntity;
                                   SizedBox(height: 15),
                                   Container(
                                     alignment: .center,
-                                    width: context.height * .21,
+                                    width: context.height * .204,
                                     child: Text(
                                       result.name,
                                       textAlign: .center,
@@ -105,11 +112,11 @@ late UserEntity _userEntity;
                           ),
                           SizedBox(height: 20),
                           BlocBuilder<AuthCubit,AuthState>(
-                            bloc: logoutCubit,
+                            bloc: _logoutCubit,
                             builder: (context,state) {
                               final result=state.logoutServer;
                               if(!result.isLoading){
-                                return buildButtonsRow(context,onExitClick: ()async{await logoutCubit.logout();});
+                                return buildButtonsRow(context,onExitClick: ()async{await _logoutCubit.logout();});
                               }else{
                                 return CircularProgressIndicator(color: AppColors.white,);
                               }
@@ -144,8 +151,44 @@ late UserEntity _userEntity;
 
                 ];
             }, body:TabBarView(children: [
-          buildGridView(),
-          buildGridView()
+          BlocBuilder<MoviesCubit,MoviesState>(
+            bloc: _watchListCubit,
+            builder: (context,state) {
+              final watchListState=state.moviesServer;
+              if(watchListState.isLoading){
+                return Center(child: CircularProgressIndicator(color: AppColors.white,),);
+              }else if(watchListState.isSuccess&&watchListState.data!=null){
+                final movies=watchListState.data;
+                if(movies!.isEmpty) return Center(child: Image.asset(AppAssets.emptyList),);
+                return buildGridView(movies);
+              }else{
+                return Text(
+                  "${watchListState.errorMessage}",
+                  style: context.textTheme.headlineMedium,
+                );
+              }
+
+            }
+          ),
+          BlocBuilder<MoviesCubit,MoviesState>(
+              bloc: _historyListCubit,
+              builder: (context,state) {
+            final historyListState=state.moviesServer;
+            if(historyListState.isLoading){
+            return Center(child: CircularProgressIndicator(color: AppColors.white,),);
+            }else if(historyListState.isSuccess&&historyListState.data!=null){
+            final movies=historyListState.data;
+            if(movies!.isEmpty) return Center(child: Image.asset(AppAssets.emptyList),);
+            return buildGridView(movies);
+            }else{
+            return Text(
+            "${historyListState.errorMessage}",
+            style: context.textTheme.headlineMedium,
+            );
+            }
+
+            }
+          )
 
         ]) ,
         ),
@@ -170,13 +213,48 @@ late UserEntity _userEntity;
         ),
         Column(
           children: [
-            Text("12", style: context.textTheme.headlineLarge),
-            Text("Wish List", style: context.textTheme.headlineSmall),
+            BlocBuilder<MoviesCubit,MoviesState>(
+                bloc: _watchListCubit,
+                builder: (context,state) {
+                  final watchListState=state.moviesServer;
+                  if(watchListState.isLoading){
+                    return Center(child: CircularProgressIndicator(color: AppColors.white,),);
+                  }else if(watchListState.isSuccess&&watchListState.data!=null){
+                    final movies=watchListState.data;
+                    if(movies!.isEmpty) return Center(child: Image.asset(AppAssets.emptyList),);
+                    return Text("${movies.length}", style: context.textTheme.headlineLarge);
+                  }else{
+                    return Text(
+                      "${watchListState.errorMessage}",
+                      style: context.textTheme.headlineMedium,
+                    );
+                  }
+
+                }
+            ),
+            Text("Watch List", style: context.textTheme.headlineSmall),
           ],
         ),
         Column(
           children: [
-            Text("10", style: context.textTheme.headlineLarge),
+            BlocBuilder<MoviesCubit,MoviesState>(
+                bloc: _historyListCubit,
+                builder: (context,state) {
+                  final historyListState=state.moviesServer;
+                  if(historyListState.isLoading){
+                    return Center(child: CircularProgressIndicator(color: AppColors.white,),);
+                  }else if(historyListState.isSuccess&&historyListState.data!=null){
+                    final movies=historyListState.data;
+                    return Text("${movies!.length}", style: context.textTheme.headlineLarge);
+                  }else{
+                    return Text(
+                      "${historyListState.errorMessage}",
+                      style: context.textTheme.headlineMedium,
+                    );
+                  }
+
+                }
+            ),
             Text("History", style: context.textTheme.headlineSmall),
           ],
         ),
@@ -192,7 +270,7 @@ late UserEntity _userEntity;
           Expanded(
             flex: 2,
             child: BlocBuilder<AuthCubit,AuthState>(
-              bloc: currentUserCubit,
+              bloc: _currentUserCubit,
               builder: (context,state) {
                 final currentUserState=state.currentUserServer;
                 if(currentUserState.isLoading){
@@ -202,7 +280,7 @@ late UserEntity _userEntity;
                   _userEntity=result!;
                   return   CustomButton(text: "Edit Profile", onPressed: ()async {
                     await Navigator.push(context, AppRoutes.profileDetailsScreen(_userEntity));
-             currentUserCubit.getCurrentUser();
+             _currentUserCubit.getCurrentUser();
                   });
                 }else{
                   return Text(
@@ -233,7 +311,7 @@ late UserEntity _userEntity;
     );
   }
 
-  GridView buildGridView() {
+  GridView buildGridView(List<StoredMovieModel>movies) {
     return GridView.builder(
       padding: EdgeInsets.only(right:16 ,top: 16,left: 16),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -242,9 +320,9 @@ late UserEntity _userEntity;
         crossAxisSpacing: 16,
         childAspectRatio: 0.68,
       ),
-      itemCount: 10,
+      itemCount: movies.length,
       itemBuilder: (context, index) {
-        return CustomMovieCard(heightRatio: .3, widthRatio: .44);
+        return CustomMovieCard(heightRatio: .3, widthRatio: .44,firestoreMovie: movies[index],);
       },
     );
   }
