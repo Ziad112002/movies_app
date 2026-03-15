@@ -42,19 +42,11 @@ import '../../features/movie_details/data/repositories/data_sources/movie_detail
     as _i512;
 import '../../features/movie_details/data/repositories/data_sources/movie_details_data_source/movie_details_data_source_impl.dart'
     as _i212;
-import '../../features/movie_details/data/repositories/data_sources/similar_movies_data_source/similar_movies_data_source.dart'
-    as _i721;
-import '../../features/movie_details/data/repositories/data_sources/similar_movies_data_source/similar_movies_data_source_impl.dart'
-    as _i819;
 import '../../features/movie_details/data/repositories/movie_details_repository_impl.dart'
     as _i541;
-import '../../features/movie_details/data/repositories/similar_movies_repository_impl.dart'
-    as _i920;
 import '../../features/movie_details/domain/models/movie_details.dart' as _i819;
 import '../../features/movie_details/domain/repository/movie_details_repository.dart'
     as _i431;
-import '../../features/movie_details/domain/repository/similar_movies_repository.dart'
-    as _i218;
 import '../../features/movie_details/domain/use_cases/movie_details_use_case.dart'
     as _i1057;
 import '../../features/movie_details/domain/use_cases/similar_movies_use_case.dart'
@@ -125,9 +117,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i876.AuthRemoteDataSource>(),
       ),
     );
-    gh.factory<_i721.SimilarMoviesDataSource>(
-      () => _i819.SimilarMoviesDataSourceImpl(gh<_i652.ApiClient>()),
-    );
     gh.factory<_i27.MoviesRepository>(
       () => _i197.MoviesRepositoryImpl(
         gh<_i895.Connectivity>(),
@@ -135,19 +124,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1001.MoviesMapper>(),
       ),
     );
-    gh.factory<_i218.SimilarMoviesRepository>(
-      () => _i920.SimilarMoviesRepositoryImpl(
-        gh<_i895.Connectivity>(),
-        gh<_i1001.MoviesMapper>(),
-        gh<_i721.SimilarMoviesDataSource>(),
-      ),
-    );
     gh.factory<_i431.MovieDetailsRepository>(
       () => _i541.MovieDetailsRepositoryImpl(
         gh<_i512.MovieDetailsDataSource>(),
         gh<_i895.Connectivity>(),
         gh<_i915.MovieDetailsMapper>(),
+        gh<_i1001.MoviesMapper>(),
       ),
+    );
+    gh.factory<_i1057.MovieDetailsUseCase>(
+      () => _i1057.MovieDetailsUseCase(gh<_i431.MovieDetailsRepository>()),
     );
     gh.factory<_i410.CurrentUserUseCase>(
       () => _i410.CurrentUserUseCase(gh<_i563.AuthRepos>()),
@@ -173,14 +159,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i44.UpdateAccountUseCase>(
       () => _i44.UpdateAccountUseCase(gh<_i563.AuthRepos>()),
     );
+    gh.factory<_i953.SimilarMoviesUseCase>(
+      () => _i953.SimilarMoviesUseCase(gh<_i431.MovieDetailsRepository>()),
+    );
     gh.factory<_i729.MoviesUseCase>(
       () => _i729.MoviesUseCase(gh<_i27.MoviesRepository>()),
-    );
-    gh.factory<_i953.SimilarMoviesUseCase>(
-      () => _i953.SimilarMoviesUseCase(gh<_i218.SimilarMoviesRepository>()),
-    );
-    gh.factory<_i1057.MovieDetailsUseCase>(
-      () => _i1057.MovieDetailsUseCase(gh<_i431.MovieDetailsRepository>()),
     );
     gh.factory<_i384.MovieDetailsCubit>(
       () => _i384.MovieDetailsCubit(
