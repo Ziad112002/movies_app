@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:movies/core/locale_cubit/local_cubit.dart';
 import 'package:movies/core/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:movies/features/auth/ui/screens/forget_password/forget_password_screen.dart';
 import 'package:movies/features/auth/ui/screens/login/login_screen.dart';
-import 'package:movies/features/navigation/ui/screens/navigation_screen.dart';
-import 'package:movies/features/splash_onboarding/screens/onboarding_screen.dart';
 import 'core/di/di.dart';
 import 'firebase_options.dart';
+import 'l10n/app_localizations.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   initDependencies();
 
-  runApp(const MyApp());
+  runApp(
+      BlocProvider(
+          create: (_) =>LocaleCubit() ,
+          child: const MyApp()
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,11 +27,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.themeData,
-      home: LoginScreen(),
+    return BlocBuilder<LocaleCubit, Locale>(
+      builder: (context, locale) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          locale: locale,
+          theme: AppTheme.themeData,
+          supportedLocales: const [Locale('en'), Locale('ar')],
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+
+          home: const LoginScreen(),
+        );
+      },
     );
   }
 }
-

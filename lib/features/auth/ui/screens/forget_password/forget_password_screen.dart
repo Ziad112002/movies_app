@@ -9,6 +9,7 @@ import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_state.dart';
 import 'package:movies/features/auth/ui/widgets/custom_button.dart';
 import 'package:movies/features/auth/ui/widgets/custom_text_field.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import '../../../../../core/utils/resource.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   AuthCubit cubit = getIt();
   @override
   Widget build(BuildContext context) {
+    var localization=AppLocalizations.of(context)!;
     return BlocListener<AuthCubit, AuthState>(
       bloc: cubit,
       listener: (context, state) {
@@ -44,7 +46,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Forget Password')),
+        appBar: AppBar(title: Text(localization.forgetPassword)),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -54,7 +56,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 SizedBox(height: context.height * .026),
                 CustomTextField(
                   controller: emailCtrl,
-                  hintText: "Email",
+                  hintText: localization.emailHint,
                   prefixIcon: ImageIcon(
                     AssetImage(AppAssets.iconEmail),
                     color: AppColors.white,
@@ -68,7 +70,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     final forgotPass = state.loginServer;
                     if (!forgotPass.isLoading) {
                       return CustomButton(
-                        text: "Verify Email",
+                        text: localization.verifyEmailButton,
                         onPressed: () {
                           cubit.forgotPass(emailCtrl.text.trim());
                         },
@@ -88,10 +90,3 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     );
   }
 }
-
-// BlocBuilder<AuthCubit, AuthState>(
-// bloc: loginCubit,
-// builder: (context, state) {
-//
-// },
-// ),

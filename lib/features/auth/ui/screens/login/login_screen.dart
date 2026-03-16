@@ -10,7 +10,9 @@ import 'package:movies/core/utils/resource.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_state.dart';
 import 'package:movies/features/auth/ui/widgets/custom_button.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import '../../../../../core/di/di.dart';
+import '../../../../../core/locale_cubit/local_cubit.dart';
 import '../../widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
   @override
   Widget build(BuildContext context) {
+     var localization=AppLocalizations.of(context)!;
     return BlocListener<AuthCubit,AuthState>(
       bloc: loginWithGoogleCubit,
       listener: (context, state) {
@@ -93,13 +96,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       CustomTextField(
                         controller: _emailCtrl,
                         validator: AppValidators.emailValidator,
-                        hintText: "Email",
+                        hintText: localization.emailHint,
                         prefixIcon: Image.asset(AppAssets.iconEmail),
                       ),
                       SizedBox(height: context.height * .024),
                       CustomTextField(
                         controller: _passCtrl,
-                        hintText: "Password",
+                        hintText: localization.passwordHint,
                         validator: AppValidators.passValidator,
                         isObscure: isObscure,
                         prefixIcon: Image.asset(AppAssets.iconLock),
@@ -113,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         overlayColor: WidgetStatePropertyAll(Colors.transparent),
 
                         child: Text(
-                          "Forget Password ?",
+                          localization.forgetPassword,
                           style: context.textTheme.bodySmall?.copyWith(
                             color: AppColors.lightOrange,
                           ),
@@ -127,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           final result = state.loginServer;
                           if (!result.isLoading) {
                             return CustomButton(
-                              text: "Login",
+                              text: localization.loginTitle,
                               onPressed: () {
                                 if(!_formKey.currentState!.validate()) return;
                                 loginCubit.login(
@@ -150,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: .center,
                         children: [
                           Text(
-                            "Don’t Have Account ? ",
+                            localization.noAccount,
                             style: context.textTheme.bodySmall,
                           ),
                           InkWell(
@@ -158,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.push(context, AppRoutes.registerScreen);
                             },
                             child: Text(
-                              "Create One",
+                              localization.createOne,
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.lightOrange,
                                 fontWeight: FontWeight.w900,
@@ -169,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: context.height * .028),
                       Text(
-                        "Or",
+                        localization.or,
                         style: context.textTheme.labelMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -183,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: ()  {
                                  loginWithGoogleCubit.loginWithGoogle();
                               },
-                              text: 'Login With Google',
+                              text: localization.loginWithGoogle,
                               icon: Image.asset(AppAssets.iconGoogle),
                             );
                           }else{
@@ -197,7 +200,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       ),
                       SizedBox(height: context.height * .036),
-                      buildLocalizationButton(),
+                      BlocBuilder<LocaleCubit, Locale>(
+                        builder: (context, locale) {
+                          bool isArabic = locale.languageCode == 'ar';
+                          return Switch(
+                            trackOutlineColor: WidgetStatePropertyAll(AppColors.lightOrange),
+                            inactiveTrackColor: AppColors.black,
+                            activeTrackColor: AppColors.lightOrange,
+                            activeThumbColor: AppColors.white,
+                            activeThumbImage: AssetImage(isArabic?AppAssets.iconEgypt:AppAssets.iconUS),
+                            inactiveThumbImage: AssetImage(isArabic?AppAssets.iconEgypt:AppAssets.iconUS),
+                            value: isArabic,
+                            onChanged: (value) {
+                              context.read<LocaleCubit>().changeLocale(
+                                value ?  'ar' :  'en',
+                              );
+                            },
+                          );
+                        },
+                      )
                     ],
                   ),
                 ),
@@ -209,17 +230,5 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildLocalizationButton() {
-    return Switch(
-      trackOutlineColor: WidgetStatePropertyAll(AppColors.lightOrange),
-      inactiveTrackColor: Colors.transparent,
-      inactiveThumbColor: AppColors.lightOrange,
-      activeTrackColor: Colors.transparent,
-      activeThumbColor: AppColors.lightOrange,
-      activeThumbImage: AssetImage(AppAssets.iconEgypt),
-      inactiveThumbImage: AssetImage(AppAssets.iconUS),
-      value: false,
-      onChanged: (value) {},
-    );
-  }
+
 }

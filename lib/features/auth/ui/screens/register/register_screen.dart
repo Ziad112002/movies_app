@@ -13,6 +13,8 @@ import 'package:movies/features/auth/ui/screens/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/ui/screens/cubit/auth_state.dart';
 import 'package:movies/features/auth/ui/widgets/custom_button.dart';
 import 'package:movies/features/auth/ui/widgets/custom_carousel_slider.dart';
+import 'package:movies/l10n/app_localizations.dart';
+import '../../../../../core/locale_cubit/local_cubit.dart';
 import '../../widgets/custom_text_field.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -41,6 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    var localization=AppLocalizations.of(context)!;
     return BlocListener<AuthCubit,AuthState>(
       bloc: _cubit,
       listener:(context,state){
@@ -60,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("Register")),
+        appBar: AppBar(title: Text(localization.registerTitle)),
         body: Form(
           key: _formKey,
           child: Padding(
@@ -81,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   CustomTextField(
                     controller: _nameCtrl,
-                    hintText: "Name",
+                    hintText: localization.nameHint,
                     validator:
                       AppValidators.generalValidator
                      ,
@@ -93,7 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: context.height * .024),
                   CustomTextField(
                     controller: _emailCtrl,
-                    hintText: "Email",
+                    hintText: localization.emailHint,
                     validator:
                       AppValidators.emailValidator
 
@@ -106,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: context.height * .024),
                   CustomTextField(
                     controller: _passCtrl,
-                    hintText: "Password",
+                    hintText: localization.passwordHint,
                     validator:AppValidators.passValidator,
                     isObscure: isObscure,
                     prefixIcon: ImageIcon(
@@ -120,14 +123,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(height: context.height * .024),
                   CustomTextField(
-                    hintText: "Confirm Password",
+                    hintText: localization.confirmPasswordHint,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please re-enter your password';
+                        return localization.pleaseReenterPassword;
                       }
                       // Comparison logic
                       if (value != _passCtrl.text) {
-                        return 'Passwords do not match';
+                        return localization.passwordsDoNotMatch;
                       }
                       return null;
                     },
@@ -144,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: context.height * .024),
                   CustomTextField(
                     controller: _phoneCtrl,
-                    hintText: "Phone Number",
+                    hintText: localization.phoneHint,
                     validator:           AppValidators.generalValidator,
                     prefixIcon: ImageIcon(
                       AssetImage(AppAssets.iconCall),
@@ -158,7 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     final result=state.signUpServer;
                     if(!result.isLoading){
                       return CustomButton(
-                          text: "Create Account",
+                          text: localization.createAccountButton,
                           onPressed: ()  {
                             if(!_formKey.currentState!.validate())return;
                           _cubit.signUp(_emailCtrl.text, _passCtrl.text, _nameCtrl.text, _phoneCtrl.text, avtarPath);
@@ -177,7 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     mainAxisAlignment: .center,
                     children: [
                       Text(
-                        "Already Have Account ? ",
+                        localization.alreadyHaveAccount,
                         style: context.textTheme.bodySmall,
                       ),
                       InkWell(
@@ -185,7 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          "Login",
+                          localization.loginTitle,
                           style: context.textTheme.bodySmall?.copyWith(
                             color: AppColors.lightOrange,
                             fontWeight: FontWeight.w900,
@@ -196,28 +199,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(height: context.height * .025),
 
-                 buildLocalizationButton()
+                  BlocBuilder<LocaleCubit, Locale>(
+                    builder: (context, locale) {
+                      bool isArabic = locale.languageCode == 'ar';
+                      return Switch(
+                        trackOutlineColor: WidgetStatePropertyAll(AppColors.lightOrange),
+                        inactiveTrackColor: AppColors.black,
+                        activeTrackColor: AppColors.lightOrange,
+                        activeThumbColor: AppColors.white,
+                        activeThumbImage: AssetImage(isArabic?AppAssets.iconEgypt:AppAssets.iconUS),
+                        inactiveThumbImage: AssetImage(isArabic?AppAssets.iconEgypt:AppAssets.iconUS),
+                        value: isArabic,
+                        onChanged: (value) {
+                          context.read<LocaleCubit>().changeLocale(
+                            value ?  'ar' :  'en',
+                          );
+                        },
+                      );
+                    },
+                  )
+
                 ],
               ),
             ),
           ),
         ),
       ),
-    );
-  }
-  Widget buildLocalizationButton() {
-    return    Switch(
-      trackOutlineColor: WidgetStatePropertyAll(
-        AppColors.lightOrange,
-      ),
-      inactiveTrackColor: Colors.transparent,
-      inactiveThumbColor: AppColors.lightOrange,
-      activeTrackColor: Colors.transparent,
-      activeThumbColor: AppColors.lightOrange,
-      activeThumbImage: AssetImage(AppAssets.iconEgypt),
-      inactiveThumbImage: AssetImage(AppAssets.iconUS),
-      value: false,
-      onChanged: (value) {},
     );
   }
 }

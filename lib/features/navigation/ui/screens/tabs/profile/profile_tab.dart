@@ -14,6 +14,7 @@ import 'package:movies/features/auth/ui/widgets/custom_movie_card.dart';
 import 'package:movies/features/movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
 import 'package:movies/features/navigation/ui/screens/cubit/movies_cubit.dart';
 import 'package:movies/features/navigation/ui/screens/cubit/movies_state.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import '../../../../../../core/utils/resource.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -40,6 +41,7 @@ late UserEntity _userEntity;
 
   @override
   Widget build(BuildContext context) {
+  var localization=AppLocalizations.of(context)!;
     return BlocListener<AuthCubit,AuthState>(
       bloc: _logoutCubit,
       listener: (context,state){
@@ -133,12 +135,12 @@ late UserEntity _userEntity;
                             unselectedLabelColor: AppColors.white,
                             tabs: [
                               Tab(
-                                text: "Watch List",
+                                text: localization.watchList,
                                 icon: ImageIcon(AssetImage(AppAssets.iconList),
                                   color: AppColors.lightOrange,),
                               ),
                               Tab(
-                                text: "History",
+                                text: localization.history,
                                 icon: ImageIcon(AssetImage(AppAssets.iconFolder),
                                   color: AppColors.lightOrange,),
                               ),
@@ -197,6 +199,7 @@ late UserEntity _userEntity;
   }
 
   Row buildProfileAvatarRow(BuildContext context,String avatarPath) {
+
     return Row(
       mainAxisAlignment: .spaceEvenly,
       children: [
@@ -231,7 +234,7 @@ late UserEntity _userEntity;
 
                 }
             ),
-            Text("Watch List", style: context.textTheme.headlineSmall),
+            Text(AppLocalizations.of(context)!.watchList, style: context.textTheme.headlineSmall),
           ],
         ),
         Column(
@@ -254,7 +257,7 @@ late UserEntity _userEntity;
 
                 }
             ),
-            Text("History", style: context.textTheme.headlineSmall),
+            Text(AppLocalizations.of(context)!.history, style: context.textTheme.headlineSmall),
           ],
         ),
       ],
@@ -277,7 +280,7 @@ late UserEntity _userEntity;
                 }else if(currentUserState.isSuccess&&currentUserState.data!=null){
                   var result =currentUserState.data;
                   _userEntity=result!;
-                  return   CustomButton(text: "Edit Profile", onPressed: ()async {
+                  return   CustomButton(text: AppLocalizations.of(context)!.editProfile, onPressed: ()async {
                     await Navigator.push(context, AppRoutes.profileDetailsScreen(_userEntity));
              _currentUserCubit.getCurrentUser();
                   });
@@ -296,7 +299,7 @@ late UserEntity _userEntity;
           Expanded(
             flex: 1,
             child: CustomButton(
-              text: "Exit",
+              text: AppLocalizations.of(context)!.exit,
               icon2: Icon(Icons.exit_to_app_outlined,color: AppColors.white,),
               onPressed: onExitClick,
               background: AppColors.red,

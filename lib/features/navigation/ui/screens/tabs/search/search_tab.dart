@@ -11,6 +11,7 @@ import 'package:movies/features/auth/ui/widgets/custom_text_field.dart';
 import 'package:movies/features/navigation/domain/models/movie.dart';
 import 'package:movies/features/navigation/ui/screens/cubit/movies_cubit.dart';
 import 'package:movies/features/navigation/ui/screens/cubit/movies_state.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 class SearchTab extends StatefulWidget {
   const SearchTab({super.key});
@@ -37,6 +38,7 @@ class _SearchTabState extends State<SearchTab> {
 
   @override
   Widget build(BuildContext context) {
+    var localization=AppLocalizations.of(context)!;
     return BlocProvider(
       create: (_) => searchCubit,
       child: SafeArea(
@@ -45,7 +47,7 @@ class _SearchTabState extends State<SearchTab> {
           child: Column(
             children: [
               CustomTextField(
-                hintText: "Search",
+                hintText: localization.searchHint,
                 controller: queryCtrl,
                 onChanged: _onSearchChanged,
                 prefixIcon: ImageIcon(
@@ -69,7 +71,7 @@ class _SearchTabState extends State<SearchTab> {
                         child: Center(
                           child: Text(
                             textAlign: .center,
-                            "We couldn't find \"${queryCtrl.text.trim()}\"\nTry a different name or check spelling",
+                            "${localization.weDoNotFind} \"${queryCtrl.text.trim()}\"\n${localization.tryDifferentSpelling}",
                             style: context.textTheme.bodyLarge?.copyWith(color: AppColors.lightOrange),
                           ),
                         ),

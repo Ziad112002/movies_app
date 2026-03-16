@@ -10,6 +10,7 @@ import 'package:movies/features/movie_details/data/repositories/data_sources/mod
 import 'package:movies/features/movie_details/domain/models/movie_details.dart';
 import 'package:movies/features/movie_details/ui/screens/cubit/movie_details_cubit.dart';
 import 'package:movies/features/movie_details/ui/screens/cubit/movie_details_state.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/utils/resource.dart';
 import '../../../auth/ui/widgets/custom_movie_card.dart';
@@ -49,7 +50,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
           final addWatchState=state.toggleMovieServer;
           if(addWatchState.isSuccess){
             Fluttertoast.showToast(
-                msg: _isExist?"Added to Watch List":"Removed from watch list",
+                msg: _isExist?AppLocalizations.of(context)!.addedToWatchList:AppLocalizations.of(context)!.removedFromWatchList,
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
                 timeInSecForIosWeb: 1,
@@ -237,7 +238,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               ),
                               SizedBox(height: context.height * .017),
                               Text(
-                                "Screen Shots",
+                                AppLocalizations.of(context)!.screenshots,
                                 textAlign: .start,
                                 style: context.textTheme.headlineSmall,
                               ),
@@ -249,7 +250,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               buildScreenshotImage(data.screenshot3),
                               SizedBox(height: context.height * .017),
                               Text(
-                                "Similar",
+                                AppLocalizations.of(context)!.similar,
                                 textAlign: .start,
                                 style: context.textTheme.headlineSmall,
                               ),
@@ -275,7 +276,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               ),
                               SizedBox(height: context.height * .017),
                               Text(
-                                "Summary",
+                                AppLocalizations.of(context)!.summary,
                                 textAlign: .start,
                                 style: context.textTheme.headlineSmall,
                               ),
@@ -287,7 +288,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               ),
                               SizedBox(height: context.height * .017),
                               Text(
-                                "Cast",
+                                AppLocalizations.of(context)!.cast,
                                 textAlign: .start,
                                 style: context.textTheme.headlineSmall,
                               ),
@@ -295,7 +296,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               buildCastList(data.cast),
                               SizedBox(height: context.height * .017),
                               Text(
-                                "Genres",
+                                AppLocalizations.of(context)!.genres,
                                 textAlign: .start,
                                 style: context.textTheme.headlineSmall,
                               ),
@@ -516,7 +517,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
         crossAxisCount: 3,
         mainAxisSpacing: 12,
         crossAxisSpacing: 16,
-        childAspectRatio: 3,
+        childAspectRatio: 2.8,
       ),
       itemCount: genres.length,
       itemBuilder: (context, index) {
