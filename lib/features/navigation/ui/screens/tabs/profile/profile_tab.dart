@@ -221,8 +221,7 @@ late UserEntity _userEntity;
                     return Center(child: CircularProgressIndicator(color: AppColors.white,),);
                   }else if(watchListState.isSuccess&&watchListState.data!=null){
                     final movies=watchListState.data;
-                    if(movies!.isEmpty) return Center(child: Image.asset(AppAssets.emptyList),);
-                    return Text("${movies.length}", style: context.textTheme.headlineLarge);
+                    return Text("${movies!.length}", style: context.textTheme.headlineLarge);
                   }else{
                     return Text(
                       "${watchListState.errorMessage}",

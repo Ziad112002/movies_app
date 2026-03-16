@@ -38,14 +38,21 @@ class MovieDetailsDataSourceImpl extends MovieDetailsDataSource  {
   }
 
   @override
-  Future<ApiResult<void>> createMovieInFireStore(StoredMovieModel movie,String collectionName)async {
+  Future<ApiResult<void>> toggleMovieInFireStore(StoredMovieModel movie,String collectionName,bool isExist)async {
     try {
       final firebaseUser= _firebaseAuth.currentUser;
       CollectionReference reference= _firestore.collection("users").doc(firebaseUser!.uid).collection(collectionName);
-      DocumentReference document=reference.doc();
-      movie.id=document.id ;
-      await document.set(movie.toJson());
-      return SuccessApiResult(null);
+      QuerySnapshot query=await reference.where("movie_id",isEqualTo:movie.movieId ).limit(1).get();
+      if(!isExist){
+        DocumentReference document=reference.doc();
+        movie.id=document.id ;
+        await document.set(movie.toJson());
+        return SuccessApiResult(null);
+      }else{
+        await query.docs.first.reference.delete();
+        return SuccessApiResult(null);
+      }
+
     } on FirebaseException catch (e) {
      return ErrorApiResult(UnKnownErrors(errorMessage: e.message??"error"));
     }

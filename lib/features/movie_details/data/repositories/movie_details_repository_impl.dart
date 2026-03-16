@@ -50,9 +50,9 @@ class MovieDetailsRepositoryImpl extends MovieDetailsRepository {
     }
   }
   @override
-  Future<ApiResult<void>> createMovieInFirestore(StoredMovieModel movie,String collectionName)async {
+  Future<ApiResult<void>> toggleMovieInFireStore(StoredMovieModel movie,String collectionName,bool isExist)async {
     if(await _connectivity.isConnected){
-      var result=await _movieDetailsDataSource.createMovieInFireStore(movie,collectionName);
+      var result=await _movieDetailsDataSource.toggleMovieInFireStore(movie,collectionName,isExist);
       if(result.isSuccess){
         return result;
       }else{

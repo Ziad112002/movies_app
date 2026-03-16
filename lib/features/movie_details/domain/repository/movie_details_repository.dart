@@ -6,7 +6,7 @@ import '../models/movie_details.dart';
 abstract class MovieDetailsRepository {
   Future<ApiResult<MovieDetails>>loadMovieDetails(int id);
   Future<ApiResult<List<Movie>>>loadSimilarMovies(int id);
-  Future<ApiResult<void>> createMovieInFirestore(StoredMovieModel movie,String collectionName);
+  Future<ApiResult<void>> toggleMovieInFireStore(StoredMovieModel movie,String collectionName,bool isExist);
   Future<ApiResult<bool>>checkMovieExists(int movieID,String collectionName);
 
 

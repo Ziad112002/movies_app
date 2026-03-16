@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies/core/utils/app_assets.dart';
 import 'package:movies/core/utils/app_colors.dart';
 import 'package:movies/core/utils/app_routes.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
@@ -18,38 +19,36 @@ class CustomMovieCard extends StatelessWidget {
       onTap: (){
 Navigator.push(context, AppRoutes.movieDetailsScreen(movie?.movieId??firestoreMovie!.movieId));
       },
-
-          child:Container(
+      child: Stack(
+        children: [
+          Container(
             height: context.height*heightRatio,
             width: context.width*widthRatio,
-            padding: EdgeInsets.only(left:8,top: 8),
             decoration:BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(  image: NetworkImage(movie?.largeCoverImage??firestoreMovie!.coverImage),fit: .cover,)
             ) ,
-            child: Column(
-   crossAxisAlignment: .start,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 7,vertical: 5),
-                  width: context.width*.155,
-                  decoration: BoxDecoration(
-                      color: AppColors.softBlack.withAlpha(178),
-                      borderRadius: BorderRadius.circular(16)
-                  ),
-                  child: Row(
-                    mainAxisAlignment: .center,
-                    children: [
-                      Text("${movie?.rating??firestoreMovie!.rating}",style: context.textTheme.bodySmall?.copyWith(fontSize: 16),),
-                      Icon(Icons.star_rate_sharp,color: AppColors.lightOrange,)
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
-
-
+          Positioned(
+            top:11 ,
+            left: 9,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 7,vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.softBlack.withAlpha(178),
+                borderRadius: BorderRadius.circular(16)
+              ),
+              child: Row(
+                mainAxisAlignment: .center,
+                children: [
+                  Text("${movie?.rating??firestoreMovie!.rating}",style: context.textTheme.bodySmall?.copyWith(fontSize: 16),),
+                  Icon(Icons.star_rate_sharp,color: AppColors.lightOrange,)
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

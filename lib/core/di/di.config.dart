@@ -51,12 +51,12 @@ import '../../features/movie_details/domain/repository/movie_details_repository.
     as _i431;
 import '../../features/movie_details/domain/use_cases/check_movie_exists_use_case.dart'
     as _i735;
-import '../../features/movie_details/domain/use_cases/create_movie_in_fire_store_use_case.dart'
-    as _i471;
 import '../../features/movie_details/domain/use_cases/movie_details_use_case.dart'
     as _i1057;
 import '../../features/movie_details/domain/use_cases/similar_movies_use_case.dart'
     as _i953;
+import '../../features/movie_details/domain/use_cases/toggle_movie_in_firestore_use_case.dart'
+    as _i101;
 import '../../features/movie_details/ui/screens/cubit/movie_details_cubit.dart'
     as _i384;
 import '../../features/movie_details/ui/screens/cubit/movie_details_state.dart'
@@ -102,14 +102,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i974.FirebaseFirestore>(),
       ),
     );
-    gh.factory<_i575.MovieDetailsState>(
-      () => _i575.MovieDetailsState(
-        movieDetailsApi: gh<_i275.Resource<_i819.MovieDetails>>(),
-        similarMoviesApi: gh<_i275.Resource<List<_i410.Movie>>>(),
-        createMovieServer: gh<_i275.Resource<void>>(),
-        checkMovieServer: gh<_i275.Resource<bool>>(),
-      ),
-    );
     gh.singleton<_i652.ApiClient>(() => _i652.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i702.MoviesState>(
       () => _i702.MoviesState(
@@ -129,6 +121,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i652.ApiClient>(),
         gh<_i974.FirebaseFirestore>(),
         gh<_i59.FirebaseAuth>(),
+      ),
+    );
+    gh.factory<_i575.MovieDetailsState>(
+      () => _i575.MovieDetailsState(
+        movieDetailsApi: gh<_i275.Resource<_i819.MovieDetails>>(),
+        similarMoviesApi: gh<_i275.Resource<List<_i410.Movie>>>(),
+        toggleMovieServer: gh<_i275.Resource<void>>(),
+        checkMovieServer: gh<_i275.Resource<bool>>(),
       ),
     );
     gh.factory<_i563.AuthRepos>(
@@ -183,27 +183,27 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i540.FirestoreMoviesUseCase>(
       () => _i540.FirestoreMoviesUseCase(gh<_i27.MoviesRepository>()),
     );
-    gh.factory<_i471.CreateMovieInFireStoreUseCase>(
-      () => _i471.CreateMovieInFireStoreUseCase(
-        gh<_i431.MovieDetailsRepository>(),
-      ),
-    );
     gh.factory<_i953.SimilarMoviesUseCase>(
       () => _i953.SimilarMoviesUseCase(gh<_i431.MovieDetailsRepository>()),
     );
+    gh.factory<_i101.ToggleMovieInFirestoreUseCase>(
+      () => _i101.ToggleMovieInFirestoreUseCase(
+        gh<_i431.MovieDetailsRepository>(),
+      ),
+    );
     gh.factory<_i735.CheckMovieExistsUseCase>(
       () => _i735.CheckMovieExistsUseCase(gh<_i431.MovieDetailsRepository>()),
+    );
+    gh.factory<_i729.MoviesUseCase>(
+      () => _i729.MoviesUseCase(gh<_i27.MoviesRepository>()),
     );
     gh.factory<_i384.MovieDetailsCubit>(
       () => _i384.MovieDetailsCubit(
         gh<_i1057.MovieDetailsUseCase>(),
         gh<_i953.SimilarMoviesUseCase>(),
-        gh<_i471.CreateMovieInFireStoreUseCase>(),
+        gh<_i101.ToggleMovieInFirestoreUseCase>(),
         gh<_i735.CheckMovieExistsUseCase>(),
       ),
-    );
-    gh.factory<_i729.MoviesUseCase>(
-      () => _i729.MoviesUseCase(gh<_i27.MoviesRepository>()),
     );
     gh.factory<_i263.AuthCubit>(
       () => _i263.AuthCubit(

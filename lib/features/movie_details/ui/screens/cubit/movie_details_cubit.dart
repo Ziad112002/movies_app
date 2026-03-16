@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:movies/core/utils/resource.dart';
 import 'package:movies/features/movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
 import 'package:movies/features/movie_details/domain/use_cases/check_movie_exists_use_case.dart';
-import 'package:movies/features/movie_details/domain/use_cases/create_movie_in_fire_store_use_case.dart';
+import 'package:movies/features/movie_details/domain/use_cases/toggle_movie_in_firestore_use_case.dart';
 import 'package:movies/features/movie_details/domain/use_cases/movie_details_use_case.dart';
 import 'package:movies/features/movie_details/domain/use_cases/similar_movies_use_case.dart';
 import 'package:movies/features/movie_details/ui/screens/cubit/movie_details_state.dart';
@@ -12,18 +12,18 @@ import 'package:movies/features/movie_details/ui/screens/cubit/movie_details_sta
 class MovieDetailsCubit extends Cubit<MovieDetailsState> {
   final MovieDetailsUseCase _movieDetailsUseCase;
   final SimilarMoviesUseCase _similarMoviesUseCase;
-  final CreateMovieInFireStoreUseCase _createMovieInFireStoreUseCase;
+  final ToggleMovieInFirestoreUseCase _toggleMovieInFirestoreUseCase;
   final CheckMovieExistsUseCase _checkMovieExistsUseCase;
   MovieDetailsCubit(
     this._movieDetailsUseCase,
     this._similarMoviesUseCase,
-    this._createMovieInFireStoreUseCase,
+    this._toggleMovieInFirestoreUseCase,
     this._checkMovieExistsUseCase,
   ) : super(
         MovieDetailsState(
           movieDetailsApi: Resource.initial(),
           similarMoviesApi: Resource.initial(),
-          createMovieServer: Resource.initial(),
+          toggleMovieServer: Resource.initial(),
           checkMovieServer: Resource.initial(),
         ),
       );
@@ -57,20 +57,21 @@ class MovieDetailsCubit extends Cubit<MovieDetailsState> {
     }
   }
 
-  Future<void> createMovieInFirebase(
+  Future<void> toggleMovieInFirestore(
     StoredMovieModel movie,
     String collectionName,
+      bool isExist,
   ) async {
-    emit(state.copyWith(createMovieServer: Resource.loading()));
-    var result = await _createMovieInFireStoreUseCase(movie, collectionName);
+    emit(state.copyWith(toggleMovieServer: Resource.loading()));
+    var result = await _toggleMovieInFirestoreUseCase(movie, collectionName,isExist);
     if (result.isSuccess) {
       emit(
-        state.copyWith(createMovieServer: Resource.success(result.getData())),
+        state.copyWith(toggleMovieServer: Resource.success(null)),
       );
     } else {
       emit(
         state.copyWith(
-          createMovieServer: Resource.error(result.error!.errorMessage),
+          toggleMovieServer: Resource.error(result.error!.errorMessage),
         ),
       );
     }
@@ -86,7 +87,7 @@ class MovieDetailsCubit extends Cubit<MovieDetailsState> {
     } else {
       emit(
         state.copyWith(
-          createMovieServer: Resource.error(result.error!.errorMessage),
+          toggleMovieServer: Resource.error(result.error!.errorMessage),
         ),
       );
     }

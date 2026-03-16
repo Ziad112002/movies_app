@@ -4,10 +4,10 @@ import 'package:movies/features/movie_details/data/repositories/data_sources/mod
 import 'package:movies/features/movie_details/domain/repository/movie_details_repository.dart';
 
 @injectable
-class CreateMovieInFireStoreUseCase {
+class ToggleMovieInFirestoreUseCase {
   final MovieDetailsRepository _repo;
-  CreateMovieInFireStoreUseCase(this._repo);
-  Future<ApiResult<void>>call(StoredMovieModel movie,String collectionName)async{
-    return await _repo.createMovieInFirestore(movie, collectionName);
+  ToggleMovieInFirestoreUseCase(this._repo);
+  Future<ApiResult<void>>call(StoredMovieModel movie,String collectionName,bool isExist)async{
+    return await _repo.toggleMovieInFireStore(movie, collectionName,isExist);
   }
 }

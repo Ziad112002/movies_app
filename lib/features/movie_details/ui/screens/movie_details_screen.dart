@@ -5,13 +5,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:movies/core/di/di.dart';
 import 'package:movies/core/utils/app_colors.dart';
 import 'package:movies/core/utils/extensions/context_extension.dart';
-import 'package:movies/core/utils/resource.dart';
 import 'package:movies/features/auth/ui/widgets/custom_button.dart';
 import 'package:movies/features/movie_details/data/repositories/data_sources/models/stored_movie_model.dart';
 import 'package:movies/features/movie_details/domain/models/movie_details.dart';
 import 'package:movies/features/movie_details/ui/screens/cubit/movie_details_cubit.dart';
 import 'package:movies/features/movie_details/ui/screens/cubit/movie_details_state.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/utils/resource.dart';
 import '../../../auth/ui/widgets/custom_movie_card.dart';
 import '../../../navigation/domain/models/movie.dart';
 import '../../domain/models/cast.dart';
@@ -30,6 +30,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   final MovieDetailsCubit _addToHistoryListCubit = getIt();
   final MovieDetailsCubit _checkMovieCubit = getIt();
   late StoredMovieModel _movieModel;
+  late bool _isExist;
 
   @override
   void initState() {
@@ -44,294 +45,279 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     return BlocListener<MovieDetailsCubit,MovieDetailsState>(
       bloc: _addToWatchListCubit,
       listener: (context,state){
-        final createMovieState=state.createMovieServer;
-        if(createMovieState.isSuccess){
-          Fluttertoast.showToast(
-            msg: "Added to watch list ✅",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 5,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
+        {
+          final addWatchState=state.toggleMovieServer;
+          if(addWatchState.isSuccess){
+            Fluttertoast.showToast(
+                msg: _isExist?"Added to Watch List":"Removed from watch list",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: _isExist?Colors.green:AppColors.softBlack,
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
 
-        }else if(createMovieState.status==AppStatus.error){
-          Fluttertoast.showToast(
-            msg:
-            createMovieState.errorMessage ??
-                " Something went Wrong Pleas try again later",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-
+          }else if(addWatchState.status==AppStatus.error) {
+            Fluttertoast.showToast(
+                msg: addWatchState.errorMessage??" Something went Wrong Pleas try again later",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
+          }
 
         }
       },
-      child: BlocListener<MovieDetailsCubit,MovieDetailsState>(
-        bloc: _addToHistoryListCubit,
-        listener:(context,state){
-          final createMovieState=state.createMovieServer;
-          if(createMovieState.isSuccess){
-            Fluttertoast.showToast(
-              msg: "Added to history",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 5,
-              backgroundColor: AppColors.softBlack,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
 
-          }else if(createMovieState.status==AppStatus.error){
-            Fluttertoast.showToast(
-              msg:
-              createMovieState.errorMessage ??
-                  " Something went Wrong Pleas try again later",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
-
-
-          }
-        },
-        child: BlocProvider(
-          create: (_) => _movieDetailsCubit,
-          child: Scaffold(
-            body: BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
-              builder: (context, state) {
-                final movieDetailsState = state.movieDetailsApi;
-                if (movieDetailsState.isLoading) {
-                  return Center(
-                    child: CircularProgressIndicator(color: AppColors.white),
-                  );
-                } else if (movieDetailsState.isSuccess &&
-                    movieDetailsState.data != null) {
-                  MovieDetails data = movieDetailsState.data!;
-                  _movieModel=StoredMovieModel(data.rating, data.coverImage,"",data.id ,data.title);
-                  return SingleChildScrollView(
-                    child: Stack(
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (rect) {
-                            return const LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.black, // Top is visible
-                                Colors.transparent, // Bottom fades out
-                              ],
-                            ).createShader(
-                              Rect.fromLTRB(0, 0, rect.width, rect.height),
-                            );
-                          },
-                          blendMode: BlendMode.dstIn,
-                          child: CachedNetworkImage(
-                            imageUrl: data.coverImage,
-                            placeholder: (context, url) => Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.white,
-                              ),
+      child: BlocProvider(
+        create: (_) => _movieDetailsCubit,
+        child: Scaffold(
+          body: BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
+            builder: (context, state) {
+              final movieDetailsState = state.movieDetailsApi;
+              if (movieDetailsState.isLoading) {
+                return Center(
+                  child: CircularProgressIndicator(color: AppColors.white),
+                );
+              } else if (movieDetailsState.isSuccess &&
+                  movieDetailsState.data != null) {
+                MovieDetails data = movieDetailsState.data!;
+                _movieModel = StoredMovieModel(
+                  data.rating,
+                  data.coverImage,
+                  "",
+                  data.id,
+                  data.title,
+                );
+                return SingleChildScrollView(
+                  child: Stack(
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black, // Top is visible
+                              Colors.transparent, // Bottom fades out
+                            ],
+                          ).createShader(
+                            Rect.fromLTRB(0, 0, rect.width, rect.height),
+                          );
+                        },
+                        blendMode: BlendMode.dstIn,
+                        child: CachedNetworkImage(
+                          imageUrl: data.coverImage,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.white,
                             ),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error, color: AppColors.red),
-                            height: context.height * .7,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
                           ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error, color: AppColors.red),
+                          height: context.height * .7,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
+                      ),
 
-                        SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Column(
-                              mainAxisAlignment: .center,
-                              crossAxisAlignment: .stretch,
-                              children: [
-                                BlocBuilder<MovieDetailsCubit,MovieDetailsState>(
-                                  bloc: _addToWatchListCubit,
+                      SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            mainAxisAlignment: .center,
+                            crossAxisAlignment: .stretch,
+                            children: [
+                              BlocBuilder<MovieDetailsCubit,MovieDetailsState>(
+                                  bloc: _checkMovieCubit,
                                   builder: (context,state) {
-                                    final createMovieState=state.createMovieServer;
-                                    if(!createMovieState.isLoading){
-                                      return buildHeader(
-                                          onTap: (){
-                                       _addToWatchListCubit.createMovieInFirebase(_movieModel,"watchList");
-                                          }
-                                      );
-                                    }else{
-                                      return Center(child: CircularProgressIndicator(color:AppColors.white ,));
-                                    }
-
-                                  }
-                                ),
-                                SizedBox(height: context.height * .2),
-                                buildPlayButton(data.trailerCode),
-                                SizedBox(height: context.height * .2),
-                                Text(
-                                  data.title,
-                                  textAlign: .center,
-                                  style: context.textTheme.headlineSmall,
-                                ),
-                                SizedBox(height: context.height * .017),
-                                Text(
-                                  data.year.toString(),
-                                  textAlign: .center,
-                                  style: context.textTheme.displayMedium?.copyWith(
-                                    color: Color(0xffADADAD),
-                                  ),
-                                ),
-                                SizedBox(height: context.height * .009),
-                                BlocBuilder<MovieDetailsCubit,MovieDetailsState>(
-                                  bloc: _addToHistoryListCubit,
-                                  builder: (context,state) {
-                                    final createMovieState=state.createMovieServer;
-                                    if(!createMovieState.isLoading){
-                                      return buildWatchButton(onPressed:(){
-                                        _addToHistoryListCubit.createMovieInFirebase(_movieModel, "historyList");
-                                        _launchUrl(data.watchUrl);
-                                      }, );
-                                    }else{
+                                    final checkMovieState=state.checkMovieServer;
+                                    if(checkMovieState.isLoading){
                                       return Center(child: CircularProgressIndicator(color: AppColors.white,),);
-                                    }
-
-                                  }
-                                ),
-                                SizedBox(height: context.height * .017),
-                                buildReviewsRow(
-                                  data.likes,
-                                  data.watchCount,
-                                  data.rating,
-                                ),
-                                SizedBox(height: context.height * .017),
-                                Text(
-                                  "Screen Shots",
-                                  textAlign: .start,
-                                  style: context.textTheme.headlineSmall,
-                                ),
-                                SizedBox(height: context.height * .017),
-                                buildScreenshotImage(data.screenshot1),
-                                SizedBox(height: context.height * .014),
-                                buildScreenshotImage(data.screenshot2),
-                                SizedBox(height: context.height * .014),
-                                buildScreenshotImage(data.screenshot3),
-                                SizedBox(height: context.height * .017),
-                                Text(
-                                  "Similar",
-                                  textAlign: .start,
-                                  style: context.textTheme.headlineSmall,
-                                ),
-                                SizedBox(height: context.height * .017),
-                                BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
-                                  builder: (context, state) {
-                                    final similarState = state.similarMoviesApi;
-                                    if (similarState.isLoading) {
-                                      return CircularProgressIndicator(
-                                        color: AppColors.white,
+                                    }else if(checkMovieState.isSuccess&&checkMovieState.data!=null){
+                                      _isExist=checkMovieState.data!;
+                                      return Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Icon(Icons.arrow_back_ios, color: AppColors.white, size: 30),
+                                          ),
+                                          Spacer(),
+                                          BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
+                                            bloc: _addToWatchListCubit,
+                                            builder: (context, state) {
+                                              final toggleMovieState = state.toggleMovieServer;
+                                              if (!toggleMovieState.isLoading) {
+                                                return InkWell(
+                                                  onTap: () {
+                                                    _addToWatchListCubit.toggleMovieInFirestore(
+                                                      _movieModel,
+                                                      "watchList",
+                                                      _isExist,
+                                                    );
+                                                    _isExist = !_isExist;
+                                                  },
+                                                  child: Icon(
+                                                    Icons.bookmark,
+                                                    color: _isExist ? AppColors.lightOrange : AppColors.white,
+                                                    size: 30,
+                                                  ),
+                                                );
+                                              } else {
+                                                return CircularProgressIndicator(color: AppColors.white);
+                                              }
+                                            },
+                                          ),
+                                        ],
                                       );
-                                    } else if (similarState.isSuccess &&
-                                        similarState.data != null) {
-                                      List<Movie> movies = similarState.data!;
-                                      return buildGridView(movies);
-                                    } else {
+                                    }else{
                                       return Text(
-                                        "${similarState.errorMessage}",
+                                        "${checkMovieState.errorMessage}",
                                         style: context.textTheme.headlineMedium,
                                       );
                                     }
-                                  },
+
+
+                                  }
+                              ),
+                              SizedBox(height: context.height * .2),
+                              buildPlayButton(data.trailerCode),
+                              SizedBox(height: context.height * .2),
+                              Text(
+                                data.title,
+                                textAlign: .center,
+                                style: context.textTheme.headlineSmall,
+                              ),
+                              SizedBox(height: context.height * .017),
+                              Text(
+                                data.year.toString(),
+                                textAlign: .center,
+                                style: context.textTheme.displayMedium?.copyWith(
+                                  color: Color(0xffADADAD),
                                 ),
-                                SizedBox(height: context.height * .017),
-                                Text(
-                                  "Summary",
-                                  textAlign: .start,
-                                  style: context.textTheme.headlineSmall,
-                                ),
-                                SizedBox(height: context.height * .01),
-                                Text(
-                                  data.desc,
-                                  textAlign: .start,
-                                  style: context.textTheme.displaySmall,
-                                ),
-                                SizedBox(height: context.height * .017),
-                                Text(
-                                  "Cast",
-                                  textAlign: .start,
-                                  style: context.textTheme.headlineSmall,
-                                ),
-                                SizedBox(height: context.height * .01),
-                                buildCastList(data.cast),
-                                SizedBox(height: context.height * .017),
-                                Text(
-                                  "Genres",
-                                  textAlign: .start,
-                                  style: context.textTheme.headlineSmall,
-                                ),
-                                SizedBox(height: context.height * .01),
-                                buildGenresGridView(data.genres),
-                              ],
-                            ),
+                              ),
+                              SizedBox(height: context.height * .009),
+                              BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
+                                bloc: _addToHistoryListCubit,
+                                builder: (context, state) {
+                                  final createMovieState =
+                                      state.toggleMovieServer;
+                                  if (!createMovieState.isLoading) {
+                                    return buildWatchButton(
+                                      onPressed: () {
+                                        _addToHistoryListCubit
+                                            .toggleMovieInFirestore(
+                                              _movieModel,
+                                              "historyList",
+                                              false,
+                                            );
+                                        _launchUrl(data.watchUrl);
+                                      },
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColors.white,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              SizedBox(height: context.height * .017),
+                              buildReviewsRow(
+                                data.likes,
+                                data.watchCount,
+                                data.rating,
+                              ),
+                              SizedBox(height: context.height * .017),
+                              Text(
+                                "Screen Shots",
+                                textAlign: .start,
+                                style: context.textTheme.headlineSmall,
+                              ),
+                              SizedBox(height: context.height * .017),
+                              buildScreenshotImage(data.screenshot1),
+                              SizedBox(height: context.height * .014),
+                              buildScreenshotImage(data.screenshot2),
+                              SizedBox(height: context.height * .014),
+                              buildScreenshotImage(data.screenshot3),
+                              SizedBox(height: context.height * .017),
+                              Text(
+                                "Similar",
+                                textAlign: .start,
+                                style: context.textTheme.headlineSmall,
+                              ),
+                              SizedBox(height: context.height * .017),
+                              BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
+                                builder: (context, state) {
+                                  final similarState = state.similarMoviesApi;
+                                  if (similarState.isLoading) {
+                                    return CircularProgressIndicator(
+                                      color: AppColors.white,
+                                    );
+                                  } else if (similarState.isSuccess &&
+                                      similarState.data != null) {
+                                    List<Movie> movies = similarState.data!;
+                                    return buildGridView(movies);
+                                  } else {
+                                    return Text(
+                                      "${similarState.errorMessage}",
+                                      style: context.textTheme.headlineMedium,
+                                    );
+                                  }
+                                },
+                              ),
+                              SizedBox(height: context.height * .017),
+                              Text(
+                                "Summary",
+                                textAlign: .start,
+                                style: context.textTheme.headlineSmall,
+                              ),
+                              SizedBox(height: context.height * .01),
+                              Text(
+                                data.desc,
+                                textAlign: .start,
+                                style: context.textTheme.displaySmall,
+                              ),
+                              SizedBox(height: context.height * .017),
+                              Text(
+                                "Cast",
+                                textAlign: .start,
+                                style: context.textTheme.headlineSmall,
+                              ),
+                              SizedBox(height: context.height * .01),
+                              buildCastList(data.cast),
+                              SizedBox(height: context.height * .017),
+                              Text(
+                                "Genres",
+                                textAlign: .start,
+                                style: context.textTheme.headlineSmall,
+                              ),
+                              SizedBox(height: context.height * .01),
+                              buildGenresGridView(data.genres),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Text(
-                    "${movieDetailsState.errorMessage}",
-                    style: context.textTheme.headlineMedium,
-                  );
-                }
-              },
-            ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return Text(
+                  "${movieDetailsState.errorMessage}",
+                  style: context.textTheme.headlineMedium,
+                );
+              }
+            },
           ),
         ),
       ),
-    );
-  }
-
-  Widget buildHeader({ required void Function()? onTap}) {
-    return Row(
-      children: [
-        InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(Icons.arrow_back_ios, color: AppColors.white, size: 30),
-        ),
-        Spacer(),
-        InkWell(
-          onTap: onTap,
-            child: BlocBuilder<MovieDetailsCubit,MovieDetailsState>(
-              bloc: _checkMovieCubit,
-              builder: (context,state) {
-                  final checkState = state.checkMovieServer;
-                  if (checkState.isLoading) {
-                    return CircularProgressIndicator(
-                      color: AppColors.white,
-                    );
-                  } else if (checkState.isSuccess &&
-                      checkState.data != null) {
-                    bool isExist = checkState.data!;
-                      return Icon(Icons.bookmark, color: isExist?AppColors.lightOrange:AppColors.white, size: 30);
-                  } else {
-                    return Text(
-                      "${checkState.errorMessage}",
-                      style: context.textTheme.headlineMedium,
-                    );
-                  }
-                },
-              )
-            )
-    ,
-      ],
     );
   }
 
@@ -344,35 +330,41 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
       child: CircleAvatar(
         backgroundColor: AppColors.lightOrange,
         radius: 30,
-        child: IconButton(icon: Icon(Icons.play_arrow,size: 40,), color: AppColors.white, onPressed:(){
-          _launchYouTubeVideo(trailerId);
-
-        },),
+        child: IconButton(
+          icon: Icon(Icons.play_arrow, size: 40),
+          color: AppColors.white,
+          onPressed: () {
+            _launchYouTubeVideo(trailerId);
+          },
+        ),
       ),
     ),
   );
   Future<void> _launchYouTubeVideo(String videoId) async {
-
-    final Uri youtubeUri = Uri.parse("https://www.youtube.com/watch?v=$videoId");
+    final Uri youtubeUri = Uri.parse(
+      "https://www.youtube.com/watch?v=$videoId",
+    );
 
     if (await canLaunchUrl(youtubeUri)) {
       await launchUrl(
         youtubeUri,
-        mode: LaunchMode.externalApplication, // This forces it to open in the YouTube App
+        mode: LaunchMode
+            .externalApplication, // This forces it to open in the YouTube App
       );
     } else {
       throw 'Could not launch $youtubeUri';
     }
   }
+
   Widget buildWatchButton({required void Function()? onPressed}) {
     return CustomButton(
       text: "Watch",
       background: AppColors.red,
-       onPressed:onPressed
+      onPressed: onPressed,
     );
   }
-  Future<void>_launchUrl(String uri)async{
 
+  Future<void> _launchUrl(String uri) async {
     if (!await launchUrl(Uri.parse(uri))) {
       throw Exception('Could not launch $uri');
     }
@@ -542,3 +534,4 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 }
+
