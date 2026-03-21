@@ -96,15 +96,23 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> loginWithGoogle() async {
     emit(state.copyWith(loginWithGoogleServer: Resource.loading()));
-    var result = await _loginWithGoogleUseCase();
-    if (result.isSuccess) {
-      emit(state.copyWith(loginWithGoogleServer: Resource.success(null)));
-    } else {
-      emit(
-        state.copyWith(
-          loginWithGoogleServer: Resource.error(result.error!.errorMessage),
-        ),
-      );
+    try {
+      var result = await _loginWithGoogleUseCase();
+      print("UseCase completed - result: isSuccess=${result.isSuccess}, error=${result.error?.errorMessage}");
+      if (result.isSuccess) {
+        print("Emitting success");
+        emit(state.copyWith(loginWithGoogleServer: Resource.success(null)));
+      } else {
+        emit(
+          state.copyWith(
+            loginWithGoogleServer: Resource.error(result.error!.errorMessage),
+          ),
+        );
+        print("Emitting error: ${result.error!.errorMessage}");
+      }
+    } on Exception catch (e,stack) {
+      print("Unexpected exception in loginWithGoogle: $e");
+      print("Stack: $stack");
     }
   }
 

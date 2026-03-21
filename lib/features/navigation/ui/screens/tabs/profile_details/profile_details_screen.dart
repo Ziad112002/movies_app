@@ -209,6 +209,7 @@ final  TextEditingController _nameCtrl = TextEditingController();
                                   posText: AppLocalizations.of(context)!.ok,
                                   onPosClick: () {
                                     _deleteAccountCubit.deleteAccount();
+                                    Navigator.pushReplacement(context, AppRoutes.loginScreen);
                                   },
                                   negText: AppLocalizations.of(context)!.no,
                                   onNegClick: () {

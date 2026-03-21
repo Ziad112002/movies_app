@@ -47,8 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         } else if (loginWithGoogleState.status == AppStatus.error) {
           Fluttertoast.showToast(
             msg:
-            loginWithGoogleState.errorMessage ??
-                "Something went Wrong Pleas try again later",
+           loginWithGoogleState.errorMessage ?? "Something went Wrong Pleas try again later",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

@@ -55,47 +55,57 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return ErrorApiResult(ServerErrors(errorMessage: e.toString()));
     }
   }
+
   @override
-  Future<ApiResult<void>>loginWithGoogle() async{
-      try {
-        final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-        await googleSignIn.initialize(
-          serverClientId:
-          "676420712720-1mmbc0vf8iijpcdngsbsffkops7kcpic.apps.googleusercontent.com",
+  Future<ApiResult<void>> loginWithGoogle() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+      await googleSignIn.initialize(
+        serverClientId:
+            "676420712720-1mmbc0vf8iijpcdngsbsffkops7kcpic.apps.googleusercontent.com",
+      );
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
+
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
+      DocumentSnapshot documentSnapshot = await _firestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+      if (documentSnapshot.exists) {
+        return SuccessApiResult(null);
+      } else {
+        final remoteUser = RemoteUser(
+          id: userCredential.user!.uid,
+          email: userCredential.user!.email,
+          name: userCredential.user!.displayName,
+          avatarPath: userCredential.user!.photoURL,
+          phoneNumber: userCredential.user?.phoneNumber ?? "Un Known",
         );
-        final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
-
-        final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-        final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
-         UserCredential userCredential=await _auth.signInWithCredential(credential);
-        DocumentSnapshot documentSnapshot = await _firestore.collection('users').doc(userCredential.user!.uid).get();
-        if(documentSnapshot.exists){
-          return SuccessApiResult(null);
-        }else{
-          final remoteUser=RemoteUser(
-              id: userCredential.user!.uid,
-              email: userCredential.user!.email,
-              name: userCredential.user!.displayName,
-              avatarPath: userCredential.user!.photoURL,
-              phoneNumber: userCredential.user?.phoneNumber??"Un Known"
-          );
-          await _firestore
-              .collection('users')
-              .doc(userCredential.user!.uid)
-              .set(remoteUser.toJson());
-          return SuccessApiResult(null);
-        }
-
-
-      } on FirebaseException catch (e) {
-      return ErrorApiResult(ServerErrors(errorMessage: e.message!));
+        await _firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set(remoteUser.toJson());
+        return SuccessApiResult(null);
       }
-
-
-
-
+    } on Exception catch (e) {
+      if (e is GoogleSignInException &&
+          e.toString().contains("cancelled by the user")) {
+        return ErrorApiResult(
+          ServerErrors(errorMessage: "You didn't choose an account"),
+        );
+      } else {
+        return ErrorApiResult(ServerErrors(errorMessage: e.toString()));
+      }
+    }
   }
+
   @override
   Future<ApiResult<void>> logout() async {
     try {
@@ -105,6 +115,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return ErrorApiResult(UnKnownErrors(errorMessage: e.toString()));
     }
   }
+
   @override
   Future<ApiResult<RemoteUser>> getCurrentUser() async {
     try {
@@ -125,8 +136,9 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return ErrorApiResult(UnKnownErrors(errorMessage: e.message ?? ""));
     }
   }
+
   @override
-  Future<ApiResult<void>> forgotPass(String email)async{
+  Future<ApiResult<void>> forgotPass(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
       return SuccessApiResult(null);
@@ -134,11 +146,14 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return ErrorApiResult(ServerErrors(errorMessage: e.message!));
     }
   }
+
   @override
-  Future<ApiResult<void>> deleteAccount()async{
+  Future<ApiResult<void>> deleteAccount() async {
     try {
-      var currentUser= _auth.currentUser;
-      DocumentReference documentRef=_firestore.collection("users").doc(currentUser!.uid);
+      var currentUser = _auth.currentUser;
+      DocumentReference documentRef = _firestore
+          .collection("users")
+          .doc(currentUser!.uid);
       await documentRef.delete();
       await currentUser.delete();
       return SuccessApiResult(null);
@@ -146,16 +161,22 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return ErrorApiResult(ServerErrors(errorMessage: e.message!));
     }
   }
-  @override
-  ApiResult<void> updateAccount(String name,String phoneNumber,String avtarPath){
-    try {
-      var currentUser= _auth.currentUser;
-      DocumentReference documentRef=_firestore.collection("users").doc(currentUser!.uid);
-       documentRef.update({
-        "avatarPath":avtarPath,
-        "name":name,
-        "phoneNumber":phoneNumber,
 
+  @override
+  ApiResult<void> updateAccount(
+    String name,
+    String phoneNumber,
+    String avtarPath,
+  ) {
+    try {
+      var currentUser = _auth.currentUser;
+      DocumentReference documentRef = _firestore
+          .collection("users")
+          .doc(currentUser!.uid);
+      documentRef.update({
+        "avatarPath": avtarPath,
+        "name": name,
+        "phoneNumber": phoneNumber,
       });
 
       return SuccessApiResult(null);
@@ -163,5 +184,4 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return ErrorApiResult(ServerErrors(errorMessage: e.message!));
     }
   }
-
 }

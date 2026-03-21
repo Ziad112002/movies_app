@@ -6,6 +6,7 @@ import 'package:movies/core/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:movies/features/auth/ui/screens/login/login_screen.dart';
 import 'core/di/di.dart';
+import 'features/splash_onboarding/screens/onboarding_screen.dart';
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
 
-          home: const LoginScreen(),
+          home:  LoginScreen(),
         );
       },
     );

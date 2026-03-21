@@ -21,8 +21,8 @@ class AuthState {
     required this.updateAccountServer,
   });
   AuthState.initial() {
-    signUpServer = Resource.loading();
-    loginServer = Resource.loading();
+    signUpServer = Resource.initial();
+    loginServer = Resource.initial();
     logoutServer = Resource.initial();
     currentUserServer = Resource.initial();
     loginWithGoogleServer = Resource.initial();
